@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    </head>
+    <body>
+        <canvas id="canvas" width="1280", height="768">
+        </canvas>
+        <script>
+            var folder = "map_east";
+            var scale = 128;
+            var factor = 3;
+            var width = 11264;
+            var height = 14848;
+
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+
+            var loading;
+
+            /*
+             * Mousehandler
+             */
+            var pressed = false;
+            /*var offset = {
+                x : -(width/factor)/2,
+                y : -(height/factor)/2
+            };*/
+            var offset = {
+                x : -(width/factor)/2 + canvas.width/2,
+                y : -(height/factor)/2 + canvas.height/2
+            };
+            var last;
+            canvas.addEventListener("mouseup", function() {
+                pressed = false;
+                last = undefined;
+            });
+            canvas.addEventListener("mousedown", function() {
+                pressed = true;
+                last = undefined;
+            });
+            canvas.addEventListener("mousemove", function(e) {
+                if(pressed && !loading) {
+                    if(last != undefined) {
+                        offset = {
+                            x : offset.x + e.x - last.x,
+                            y : offset.y +  e.y - last.y
+                        };
+                    }
+                    last = {
+                        x : e.x,
+                        y : e.y
+                    };
+                }
+            });
+
+            var images = {};
+
+            function drawmap(finish) {
+                var x = 0;
+                var y = 0;
+                (function recurse() {
+                    function next() {
+                        x += scale;
+                        if(x*factor >= width) {
+                            x = 0;
+                            y += scale;
+                            if(y*factor > height) {
+                                finish();
+                                return;
+                            }
+                        }
+                        recurse();
+                    }
+                    function draw(img) {
+                        ctx.drawImage(img, x + offset.x, y + offset.y);
+                        next();
+                    }
+                    var filename = folder + "/" + "zoom_" + factor + "/" + x*factor + "_" + y*factor + ".png";
+                    if(x + offset.x > canvas.width ||
+                        y  + offset.y> canvas.height ||
+                        x + offset.x + scale < 0 ||
+                        y + offset.y + scale < 0) {
+                        images[filename] = undefined;
+                        next();
+                    }
+                    else {
+                        if(images[filename] === undefined) {
+                            var img = new Image();
+                            loading = true;
+                            img.onload = function() {
+                                images[filename] = img;
+                                draw(img);
+                                loading = false;
+                            };
+                            img.onerror = function() {
+                                next();
+                            }
+                            img.src = filename;
+                        }
+                        else {
+                            var img = images[filename];
+                            draw(img);
+                        }
+                    }
+                })();
+            }
+
+            var lastoffset;
+            function repeat() {
+                window.requestAnimationFrame(function() {
+                    if(lastoffset === undefined || lastoffset.x != offset.x || lastoffset.y != offset.y) {
+                        drawmap(repeat);
+                    }
+                    else {
+                        repeat();
+                    }
+                    lastoffset = {
+                        x : offset.x,
+                        y : offset.y
+                    }
+                });
+            }
+            repeat();
+        </script>
+    </body>
+</html>
