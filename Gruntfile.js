@@ -1,14 +1,73 @@
-{
-	"name": "sheeps",
-	"version": "0.0.0",
-	"devDependencies": {
-		"grunt": "~0.4.5",
-		"grunt-contrib-jshint": "~0.10.0",
-		"grunt-contrib-nodeunit": "~0.3.3",
-		"grunt-contrib-uglify": "~0.4.0",
-		"grunt-contrib-concat" : "~0.4.0",
-		"grunt-include-source" : "~0.3.9",
-		"grunt-contrib-less" : "~0.11.0",
-		"grunt-contrib-copy" : "~0.5.0"
-	}
-}
+var assemble = require("./assemble.js");
+var disassemble = require("./disassemble.js");
+
+module.exports = function(grunt) {
+    grunt.registerTask('assemble-west', function() {
+        var done = this.async();
+        assemble({
+            folder : "original/west",
+            span : {
+                x : {
+                    min : parseInt("2e", 16),
+                    max : parseInt("4a", 16)
+                },
+                y : {
+                    min : parseInt("31", 16),
+                    max : parseInt("48", 16)
+                }
+            },
+            scale : 512,
+            output : "big/west.png",
+            finish : function() {
+                done();
+            }
+        });
+    });
+    grunt.registerTask('disassemble-west', function() {
+        var done = this.async();
+        disassemble({
+            scale : 128,
+            maxStep : 8,
+            startStep : 1,
+            finish : function() {
+                done();
+            },
+            file : "big/west.png",
+            folder : "map_west"
+        });
+    });
+    grunt.registerTask('disassemble-east', function() {
+        var done = this.async();
+        disassemble({
+            scale : 128,
+            maxStep : 8,
+            startStep : 1,
+            finish : function() {
+                done();
+            },
+            file : "big/east.png",
+            folder : "map_east"
+        });
+    });
+    grunt.registerTask('assemble-east', function() {
+        var done = this.async();
+        assemble({
+            folder : "original/east",
+            span : {
+                x : {
+                    min : parseInt("3b", 16),
+                    max : parseInt("51", 16)
+                },
+                y : {
+                    min : parseInt("30", 16),
+                    max : parseInt("4d", 16)
+                }
+            },
+            scale : 512,
+            output : "big/east.png",
+            finish : function() {
+                done();
+            }
+        });
+    });
+};

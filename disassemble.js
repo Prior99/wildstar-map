@@ -2,29 +2,33 @@ var Canvas = require("canvas");
 var Image = Canvas.Image;
 var FS = require("fs");
 
-var scale = 128;
-var maxStep = 12;
-var step = 1;
+var scale, maxStep, step, folder;
 var canvas, ctx;
 var canvas2, ctx2;
+var finish;
 
 function scaleImage(obj) {
     scale = obj.scale == undefined ? 128 : obj.scale;
     maxStep = obj.maxStep == undefined ? 12 : obj.maxStep;
     step = obj.startStep == undefined ? 1 : obj.startStep;
-
+    finish = obj.finish;
+    folder = obj.folder;
+    process.stdout.write("Reading in file... \r");
     FS.readFile(obj.file, function(err, data) {
         var img = new Image();
         img.src = data;
         initCanvas(img.width, img.height);
         ctx.drawImage(img, 0 ,0);
-        console.log(" ...Done.");
         function done() {
             if(step < maxStep) {
                 step++;
                 scaleDown(done);
             }
+            else {
+                if(finish !== undefined) finish();
+            }
         }
+        console.log("Reading in file... Done.");
         scaleDown(done);
     });
 }
@@ -41,9 +45,7 @@ function scaleDown(done) {
 
     canvas3 = new Canvas(scale*step, scale*step);
     ctx3 = canvas3.getContext("2d");
-
-    console.log("Scaling down to factor " + step + "*" + scale + "...");
-    var dirname = "zoom_" + step;
+    var dirname = folder + "/" + "zoom_" + step;
     var x = 0, y = 0;
     function iterate() {
         var imgData = ctx.getImageData(x, y, scale*step, scale*step);
@@ -60,8 +62,9 @@ function scaleDown(done) {
             if(x >= canvas.width) {
                 x = 0;
                 y+=scale*step;
+                process.stdout.write("Disassembling large image, scale 1:" + step + "... " + Math.floor((y/canvas.height)*100) + "%\r");
                 if(y >= canvas.height) {
-                    console.log(" ...Done.");
+                    console.log("Disassembling large image, scale 1:" + step + "... Done.");
                     done();
                     return;
                 }
