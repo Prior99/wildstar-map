@@ -56,12 +56,10 @@
                 last = undefined;
             });
             canvas.addEventListener("mousemove", function(e) {
-                if(offset !== undefined && last !== undefined) {
-                    mouseoffset = {
-                        x : offset.x - e.x,
-                        y : offset.y - e.y
-                    };
-                }
+                mouseoffset = {
+                    x : e.x,
+                    y : e.y
+                };
                 if(pressed /*&& loading == 0*/) {
 
                     if(last != undefined) {
@@ -83,10 +81,20 @@
                 factor -= delta;
                 if(factor < 1) factor = 1;
                 if(factor > 12) factor = 12;
+                var mouseoffset_old = {
+                    x : (mouseoffset.x - offset.x) * oldfactor,
+                    y : (mouseoffset.y - offset.y) * oldfactor
+                };
                 offset = {
-                    x: (offset.x * oldfactor)/factor + mouseoffset.x * 1/12,
-                    y: (offset.y * oldfactor)/factor + mouseoffset.y * 1/12
-                }
+                    x: (offset.x * oldfactor)/factor,
+                    y: (offset.y * oldfactor)/factor
+                };
+                var mouseoffset_new = {
+                    x : (mouseoffset.x - offset.x) * factor,
+                    y : (mouseoffset.y - offset.y) * factor
+                };
+                offset.x += (mouseoffset_new.x - mouseoffset_old.x)/factor;
+                offset.y += (mouseoffset_new.y - mouseoffset_old.y)/factor;
                 repeat();
             }
             canvas.addEventListener("mousewheel", wheel, false);
