@@ -1,12 +1,13 @@
-function Index() {
+function Index(ul) {
     $.ajax({
         url : "index.json",
         success : function(obj) {
             for(var i in obj) {
                 (function(map) {
-                    var link = $("<a>" + map.name + "</a>").click(function() {
+                    var link = $("<a href='#'>" + map.name + "</a>").click(function(e) {
                         ShowMap(map.folder);
-                    }).appendTo("body");
+                        e.preventDefault();
+                    }).appendTo($("<li></li>").appendTo(ul));
                 })(obj[i]);
             }
         }

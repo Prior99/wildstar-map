@@ -1,6 +1,26 @@
 var assemble = require("./assemble.js");
 var disassemble = require("./disassemble.js");
 var FS = require("fs");
+
+function addToDescriptor(folder, name, done) {
+    FS.readFile("htdocs/index.json", function(err, data) {
+        var obj;
+        if(err) obj = [];
+        else obj = JSON.parse(data);
+        var arr = [];
+        for(var i in obj) {
+            if(obj[i].folder != folder) arr.push(obj[i]);
+        }
+        arr.push({
+            folder : folder,
+            name : name
+        });
+        FS.writeFile("htdocs/index.json", JSON.stringify(arr), function() {
+            done();
+        });
+    });
+}
+
 module.exports = function(grunt) {
     grunt.registerTask('assemble-west', function() {
         var done = this.async();
@@ -30,9 +50,11 @@ module.exports = function(grunt) {
         disassemble({
             scale : 128,
             maxStep : 8,
-            startStep : 1,
+            startStep : 8,
             finish : function() {
-                done();
+                addToDescriptor("map_west", "Western Continent", function() {
+                    done();
+                });
             },
             file : "big/west.png",
             folder : "htdocs/map_west"
@@ -66,9 +88,11 @@ module.exports = function(grunt) {
         disassemble({
             scale : 128,
             maxStep : 8,
-            startStep : 1,
+            startStep : 8,
             finish : function() {
-                done();
+                addToDescriptor("map_east", "Eastern Continent", function() {
+                    done();
+                });
             },
             file : "big/east.png",
             folder : "htdocs/map_east"

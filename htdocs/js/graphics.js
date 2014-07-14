@@ -12,10 +12,6 @@ var Graphics = function(canvas, config, mouse, folder) {
     this.drawstep = 0;
     this.folder = folder;
     this.factor = config.interval.end;
-    this.offset = {
-        x : -(this.config.width/this.factor)/2 + canvas.width/2,
-        y : -(this.config.height/this.factor)/2 + canvas.height/2
-    };
     mouse.onDrag(function(offset) {
         if((self.offset.x + offset.x + self.config.width/self.factor >= self.canvas.width || offset.x > 0) &&
         (self.offset.x + offset.x <= 0 || offset.x < 0))
@@ -30,6 +26,10 @@ var Graphics = function(canvas, config, mouse, folder) {
     this.mouse = mouse;
     this.resize();
     while(this.config.width / this.factor < this.canvas.width) this.factor--;
+    this.offset = {
+        x : -(this.config.width/this.factor)/2 + canvas.width/2,
+        y : -(this.config.height/this.factor)/2 + canvas.height/2
+    };
     this.redraw();
 };
 

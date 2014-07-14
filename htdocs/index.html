@@ -15,17 +15,24 @@
             canvas {
                 display:block;
             }
+            #wrapper {
+                padding: 30px;
+            }
+
         </style>
     </head>
     <body>
-        <canvas id="canvas" width="1280", height="768">
+        <div id="wrapper">
+            <h1>Maps - Index</h1>
+        </div>
         </canvas>
         <script>
             function ShowMap(map) {
                 $.ajax({
                     url : map + "/descriptor.json",
                     success : function(obj) {
-                        var canvas = document.getElementById("canvas");
+                        $("body").html("");
+                        var canvas = $("<canvas></canvas>").appendTo("body")[0];
                         var mouse = new Mouse(canvas);
                         var graphics = new Graphics(canvas, obj, mouse, map);
                     }
@@ -33,7 +40,7 @@
             }
 
             $(function() {
-                Index();
+                Index($("<ul></ul>").appendTo("#wrapper"));
             });
         </script>
     </body>
