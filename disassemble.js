@@ -2,7 +2,7 @@ var Canvas = require("canvas");
 var Image = Canvas.Image;
 var FS = require("fs");
 
-var scale, maxStep, step, folder;
+var scale, maxStep, step, folder, firstStep;
 var canvas, ctx;
 var canvas2, ctx2;
 var finish;
@@ -11,6 +11,7 @@ function scaleImage(obj) {
     scale = obj.scale == undefined ? 128 : obj.scale;
     maxStep = obj.maxStep == undefined ? 12 : obj.maxStep;
     step = obj.startStep == undefined ? 1 : obj.startStep;
+    firstStep = step;
     finish = obj.finish;
     folder = obj.folder;
     process.stdout.write("Reading in file... \r");
@@ -25,7 +26,18 @@ function scaleImage(obj) {
                 scaleDown(done);
             }
             else {
-                if(finish !== undefined) finish();
+                FS.writeFile(folder + "/" + "descriptor.json", JSON.stringify({
+                    scale : scale,
+                    interval : {
+                        start : firstStep,
+                        end : maxStep
+                    },
+                    width : img.width,
+                    height : img.height
+                }), function(err) {
+                    if(err) throw err;
+                    if(finish !== undefined) finish();
+                });
             }
         }
         console.log("Reading in file... Done.");
@@ -42,7 +54,6 @@ function initCanvas(width, height) {
 }
 
 function scaleDown(done) {
-
     canvas3 = new Canvas(scale*step, scale*step);
     ctx3 = canvas3.getContext("2d");
     var dirname = folder + "/" + "zoom_" + step;
