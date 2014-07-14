@@ -4,6 +4,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="js/graphics.js"></script>
         <script src="js/mouse.js"></script>
+        <script src="js/index.js"></script>
         <style>
             html, body {
                 padding : 0;
@@ -20,8 +21,7 @@
         <canvas id="canvas" width="1280", height="768">
         </canvas>
         <script>
-            $(function() {
-                var map = "map_east";
+            function ShowMap(map) {
                 $.ajax({
                     url : map + "/descriptor.json",
                     success : function(obj) {
@@ -30,7 +30,10 @@
                         var graphics = new Graphics(canvas, obj, mouse, map);
                     }
                 });
+            }
 
+            $(function() {
+                Index();
             });
         </script>
     </body>
