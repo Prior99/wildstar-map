@@ -52,6 +52,9 @@ function finish() {
         overall += chunk.length;
         process.stdout.write("Writing image to disk... " + Math.floor(overall/(1024*1024)) + "MB\r");
     }).on("end", function() {
+        out.end();
+    });
+    out.on("finish", function() {
         console.log("Writing image to disk... Done.");
         if(onFinish !== undefined) onFinish();
     });
@@ -65,7 +68,7 @@ module.exports = function(obj) {
     scale = obj.scale;
     folder = obj.folder;
     output = obj.output;
-    onfinish = obj.finish;
+    onFinish = obj.finish;
     x = xmin;
     y = ymin;
     console.log("Tiles: " + (xmax - xmin) + "x" +  (ymax - ymin));

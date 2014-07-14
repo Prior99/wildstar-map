@@ -1,9 +1,10 @@
 var assemble = require("./assemble.js");
 var disassemble = require("./disassemble.js");
-
+var FS = require("fs");
 module.exports = function(grunt) {
     grunt.registerTask('assemble-west', function() {
         var done = this.async();
+        try { FS.mkdirSync("big") } catch(err) {}
         assemble({
             folder : "original/west",
             span : {
@@ -25,6 +26,7 @@ module.exports = function(grunt) {
     });
     grunt.registerTask('disassemble-west', function() {
         var done = this.async();
+        try { FS.mkdirSync("map_west") } catch(err) {}
         disassemble({
             scale : 128,
             maxStep : 8,
@@ -36,21 +38,9 @@ module.exports = function(grunt) {
             folder : "map_west"
         });
     });
-    grunt.registerTask('disassemble-east', function() {
-        var done = this.async();
-        disassemble({
-            scale : 128,
-            maxStep : 8,
-            startStep : 1,
-            finish : function() {
-                done();
-            },
-            file : "big/east.png",
-            folder : "map_east"
-        });
-    });
     grunt.registerTask('assemble-east', function() {
         var done = this.async();
+        try { FS.mkdirSync("big") } catch(err) {}
         assemble({
             folder : "original/east",
             span : {
@@ -70,4 +60,21 @@ module.exports = function(grunt) {
             }
         });
     });
+    grunt.registerTask('disassemble-east', function() {
+        var done = this.async();
+        try { FS.mkdirSync("map_east") } catch(err) {}
+        disassemble({
+            scale : 128,
+            maxStep : 8,
+            startStep : 1,
+            finish : function() {
+                done();
+            },
+            file : "big/east.png",
+            folder : "map_east"
+        });
+    });
+    grunt.registerTask('west', ['assemble-west', 'disassemble-west']);
+    grunt.registerTask('east', ['assemble-east', 'disassemble-east']);
+    grunt.registerTask('maps', ['west', 'east']);
 };
