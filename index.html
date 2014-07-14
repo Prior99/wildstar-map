@@ -1,6 +1,17 @@
 <!DOCTYPE HTML>
 <html>
     <head>
+        <style>
+            html, body {
+                padding : 0;
+                margin : 0;
+                width:100%;
+                height:100%;
+            }
+            canvas {
+                display:block;
+            }
+        </style>
     </head>
     <body>
         <canvas id="canvas" width="1280", height="768">
@@ -8,23 +19,29 @@
         <script>
             var folder = "map_east";
             var scale = 128;
-            var factor = 3;
+            var factor = 6;
             var width = 11264;
             var height = 14848;
+            var max_images_cached = 1000;
 
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
 
-            var loading;
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                lastoffset = undefined;
+                repeat();
+            }
+            window.addEventListener('resize', resize, false);
+            resize();
+            var loading = 0;
 
             /*
              * Mousehandler
              */
             var pressed = false;
-            /*var offset = {
-                x : -(width/factor)/2,
-                y : -(height/factor)/2
-            };*/
+            var mouseoffset;
             var offset = {
                 x : -(width/factor)/2 + canvas.width/2,
                 y : -(height/factor)/2 + canvas.height/2
@@ -39,11 +56,18 @@
                 last = undefined;
             });
             canvas.addEventListener("mousemove", function(e) {
-                if(pressed && !loading) {
+                if(offset !== undefined && last !== undefined) {
+                    mouseoffset = {
+                        x : offset.x - e.x,
+                        y : offset.y - e.y
+                    };
+                }
+                if(pressed /*&& loading == 0*/) {
+
                     if(last != undefined) {
                         offset = {
                             x : offset.x + e.x - last.x,
-                            y : offset.y +  e.y - last.y
+                            y : offset.y + e.y - last.y
                         };
                     }
                     last = {
@@ -53,63 +77,92 @@
                 }
             });
 
-            var images = {};
+            function wheel(e) {
+            	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+                var oldfactor = factor;
+                factor -= delta;
+                if(factor < 1) factor = 1;
+                if(factor > 12) factor = 12;
+                offset = {
+                    x: (offset.x * oldfactor)/factor + mouseoffset.x * 1/12,
+                    y: (offset.y * oldfactor)/factor + mouseoffset.y * 1/12
+                }
+                repeat();
+            }
+            canvas.addEventListener("mousewheel", wheel, false);
+            canvas.addEventListener("DOMMouseScroll", wheel, false);
 
-            function drawmap(finish) {
-                var x = 0;
-                var y = 0;
-                (function recurse() {
-                    function next() {
-                        x += scale;
-                        if(x*factor >= width) {
-                            x = 0;
-                            y += scale;
-                            if(y*factor > height) {
-                                finish();
-                                return;
-                            }
-                        }
-                        recurse();
-                    }
-                    function draw(img) {
-                        ctx.drawImage(img, x + offset.x, y + offset.y);
-                        next();
-                    }
-                    var filename = folder + "/" + "zoom_" + factor + "/" + x*factor + "_" + y*factor + ".png";
-                    if(x + offset.x > canvas.width ||
-                        y  + offset.y> canvas.height ||
-                        x + offset.x + scale < 0 ||
-                        y + offset.y + scale < 0) {
-                        images[filename] = undefined;
-                        next();
-                    }
-                    else {
-                        if(images[filename] === undefined) {
-                            var img = new Image();
-                            loading = true;
-                            img.onload = function() {
-                                images[filename] = img;
-                                draw(img);
-                                loading = false;
-                            };
-                            img.onerror = function() {
-                                next();
-                            }
-                            img.src = filename;
+            var images = {};
+            var drawstep = 0;
+
+            function drawmap() {
+                drawstep = (drawstep +1) % 10000;
+                for(var y = 0; y*factor < height; y += scale) {
+                    for(var x = 0; x*factor < width; x += scale) {
+                        var filename = folder + "/" + "zoom_" + factor + "/" + x*factor + "_" + y*factor + ".png";
+                        if(x + offset.x > canvas.width ||
+                            y + offset.y > canvas.height ||
+                            x + offset.x + scale < 0 ||
+                            y + offset.y + scale < 0) {
+                            if(images[filename] !== undefined && images.length > max_images_cached)images[filename] = undefined;
+                            //console.log(filename + " no longer needed, unloading");
                         }
                         else {
-                            var img = images[filename];
-                            draw(img);
+                            function draw(img, x, y) {
+                                ctx.drawImage(img, x + offset.x, y + offset.y);
+                            }
+                            if(images[filename] === undefined || !images[filename].complete) {
+                                ctx.fillStyle = "white";
+                                ctx.strokeStyle = "black";
+                                ctx.beginPath();
+                                ctx.rect(x + offset.x + 1, y + offset.y + 1, scale - 2, scale - 2);
+                                ctx.fill();
+                                ctx.stroke();
+                                ctx.fillStyle = "#888";
+                                ctx.textAlign = "center";
+                                ctx.font = "italic 12px Verdana";
+                                ctx.fillText("Loading...", x + offset.x + scale / 2, offset.y + y + scale /2 + 6);
+                                if(images[filename] === undefined) {
+                                    (function(x, y, mystep, filename) {
+                                        //console.log("Needing " + filename + ", loading");
+                                        var img = new Image();
+                                        loading ++;
+                                        img.onload = function() {
+                                            //console.log(images);
+                                            if(drawstep == mystep) draw(img, x, y);
+                                            loading --;
+                                        };
+                                        images[filename] = img;
+                                        img.src = filename;
+                                    })(x, y, drawstep, filename);
+                                }
+                                else {
+                                    (function(x, y, mystep, filename) {
+                                        images[filename].onload = function() {
+                                            if(drawstep == mystep) draw(images[filename], x, y);
+                                            loading --;
+                                        };
+                                    })(x, y, drawstep, filename);
+                                }
+                            }
+                            else {
+                                //console.log("No need to reload:" + filename);
+                                var img = images[filename];
+                                draw(img, x, y);
+                            }
                         }
                     }
-                })();
+                }
             }
 
             var lastoffset;
             function repeat() {
                 window.requestAnimationFrame(function() {
                     if(lastoffset === undefined || lastoffset.x != offset.x || lastoffset.y != offset.y) {
-                        drawmap(repeat);
+                        var now = new Date().getTime();
+                        drawmap();
+                        console.log("Drawing took " + (new Date().getTime() - now));
+                        repeat();
                     }
                     else {
                         repeat();

@@ -1,0 +1,9 @@
+{
+    "name": "wildstar-map",
+    "version": "0.0.0",
+    "devDependencies": {
+        "grunt": "~0.4.5",
+        "canvas": "~1.1.5",
+        "ws": "~0.4.31"
+    }
+}
