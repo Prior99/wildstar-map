@@ -26,7 +26,7 @@ module.exports = function(grunt) {
     });
     grunt.registerTask('disassemble-west', function() {
         var done = this.async();
-        try { FS.mkdirSync("map_west") } catch(err) {}
+        try { FS.mkdirSync("htdocs/map_west") } catch(err) {}
         disassemble({
             scale : 128,
             maxStep : 8,
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                 done();
             },
             file : "big/west.png",
-            folder : "map_west"
+            folder : "htdocs/map_west"
         });
     });
     grunt.registerTask('assemble-east', function() {
@@ -62,7 +62,7 @@ module.exports = function(grunt) {
     });
     grunt.registerTask('disassemble-east', function() {
         var done = this.async();
-        try { FS.mkdirSync("map_east") } catch(err) {}
+        try { FS.mkdirSync("htdocs/map_east") } catch(err) {}
         disassemble({
             scale : 128,
             maxStep : 8,
@@ -71,7 +71,7 @@ module.exports = function(grunt) {
                 done();
             },
             file : "big/east.png",
-            folder : "map_east"
+            folder : "htdocs/map_east"
         });
     });
     grunt.registerTask('west', ['assemble-west', 'disassemble-west']);
