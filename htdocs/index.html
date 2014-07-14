@@ -5,6 +5,9 @@
         <script src="js/graphics.js"></script>
         <script src="js/mouse.js"></script>
         <script src="js/index.js"></script>
+        <script src="js/drawables/cursor.js"></script>
+        <script src="js/drawables/zoomometer.js"></script>
+        <script src="js/drawables/fps.js"></script>
         <style>
             html, body {
                 padding : 0;
@@ -13,7 +16,17 @@
                 height:100%;
             }
             canvas {
+                position: absolute;
+                left: 0px;
+                top: 0px;
                 display:block;
+                cursor:none;
+            }
+            canvas#map {
+                background-color: #2f76bb;
+            }
+            canvas#overlay {
+                background-color: transparent;
             }
             #wrapper {
                 padding: 30px;
@@ -32,9 +45,19 @@
                     url : map + "/descriptor.json",
                     success : function(obj) {
                         $("body").html("");
-                        var canvas = $("<canvas></canvas>").appendTo("body")[0];
-                        var mouse = new Mouse(canvas);
-                        var graphics = new Graphics(canvas, obj, mouse, map);
+                        var canvas = $("<canvas id='map'></canvas>").appendTo("body")[0];
+                        var overlaycanvas = $("<canvas id='overlay'></canvas>").appendTo("body")[0];
+                        var mouse = new Mouse(overlaycanvas);
+                        var graphics = new Graphics(canvas, overlaycanvas, obj, mouse, map);
+                        graphics.addDrawable(new Cursor(mouse));
+                        graphics.addDrawable(new Zoomometer(graphics, {
+                            x : 30,
+                            y : 100
+                        }));
+                        graphics.addDrawable(new FPS(graphics, {
+                            x : 30,
+                            y : 30
+                        }));
                     }
                 });
             }

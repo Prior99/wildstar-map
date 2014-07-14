@@ -54,8 +54,8 @@ Mouse.prototype = {
         }
     },
     move : function(e) {
-        this.position.x = e.x;
-        this.position.y = e.y;
+        this.position.x = e.clientX;
+        this.position.y = e.clientY;
         if(this.pressed) {
             if(this.last != undefined) {
                 /*offset = {
@@ -63,16 +63,16 @@ Mouse.prototype = {
                     y : offset.y + e.y - last.y
                 };*/
                 var offset = {
-                    x : e.x - this.last.x,
-                    y : e.y - this.last.y
+                    x : e.clientX - this.last.x,
+                    y : e.clientY - this.last.y
                 }
                 for(var i in this.dragEvents) {
                     this.dragEvents[i](offset);
                 }
             }
             this.last = {
-                x : e.x,
-                y : e.y
+                x : e.clientX,
+                y : e.clientY
             };
         }
     },

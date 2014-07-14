@@ -1,13 +1,17 @@
-var Graphics = function(canvas, config, mouse, folder) {
+var Graphics = function(canvas, overlay, config, mouse, folder) {
     var self = this;
     this.config = config;
     window.addEventListener('resize', function() {
         self.resize();
     }, false);
+    this.drawables = [];
     this.loading = 0;
-    this.max_images_cached = 1000;
+    this.max_images_cached = 100;
+    this.FPS = 60; //Fixing the framerate to a framerate different from 60 does not work
     this.canvas = canvas;
+    this.overlay = overlay;
     this.ctx = this.canvas.getContext("2d");
+    this.octx = this.overlay.getContext("2d");
     this.images = {};
     this.drawstep = 0;
     this.folder = folder;
@@ -58,6 +62,8 @@ Graphics.prototype = {
     resize : function() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.overlay.width = window.innerWidth;
+        this.overlay.height = window.innerHeight;
         this.forceRedraw();
     },
     forceRedraw : function() {
@@ -124,21 +130,46 @@ Graphics.prototype = {
             }
         }
     },
+
+    drawDrawables : function() {
+        for(var i in this.drawables) {
+            var d = this.drawables[i];
+            var rect = d.getRect();
+            this.octx.clearRect(rect.x, rect.y, rect.width, rect.height);
+            d.draw(this);
+        }
+    },
+
+    addDrawable : function(drawable) {
+        this.drawables.push(drawable);
+    },
+
     redraw : function() {
         var self = this;
         window.requestAnimationFrame(function() {
-            if(self.lastoffset === undefined || self.lastoffset.x != self.offset.x || self.lastoffset.y != self.offset.y) {
-                self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
-                self.drawMap();
-                self.redraw();
+            self.tickTime = Date.now() - self.lastFrame;
+            //console.log(1000/self.tickTime+"<"+self.FPS);
+            if(self.lastFrame == undefined || 1000/self.tickTime < self.FPS) {
+                //console.log("Render");
+                self.lastFrame = Date.now();
+                if(self.lastoffset === undefined || self.lastoffset.x != self.offset.x || self.lastoffset.y != self.offset.y) {
+                    //self.ctx.fillStyle = "";
+                    //self.ctx.fillRect(0, 0, self.canvas.width, self.canvas.height);
+                    self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+                    self.drawMap();
+                }
+                self.drawDrawables();
+                self.lastoffset = {
+                    x : self.offset.x,
+                    y : self.offset.y
+                }
             }
-            else {
-                self.redraw();
-            }
-            self.lastoffset = {
-                x : self.offset.x,
-                y : self.offset.y
-            }
+            self.redraw();
         });
     }
 };
+
+
+function degToRad(degree) {
+    return (2*Math.PI)/360 * degree;
+}
