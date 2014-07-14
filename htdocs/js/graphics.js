@@ -11,20 +11,25 @@ var Graphics = function(canvas, config, mouse, folder) {
     this.images = {};
     this.drawstep = 0;
     this.folder = folder;
-    this.factor = config.interval.start;
+    this.factor = config.interval.end;
     this.offset = {
         x : -(this.config.width/this.factor)/2 + canvas.width/2,
         y : -(this.config.height/this.factor)/2 + canvas.height/2
     };
     mouse.onDrag(function(offset) {
-        self.offset.x += offset.x;
-        self.offset.y += offset.y;
+        if((self.offset.x + offset.x + self.config.width/self.factor >= self.canvas.width || offset.x > 0) &&
+        (self.offset.x + offset.x <= 0 || offset.x < 0))
+            self.offset.x += offset.x;
+        if((self.offset.y + offset.y + self.config.height/self.factor >= self.canvas.height || offset.y > 0) &&
+            (self.offset.y + offset.y <= 0 || offset.y < 0))
+            self.offset.y += offset.y;
     });
     mouse.onWheel(function(delta) {
         self.zoom(delta);
     });
     this.mouse = mouse;
     this.resize();
+    while(this.config.width / this.factor < this.canvas.width) this.factor--;
     this.redraw();
 };
 
@@ -32,8 +37,8 @@ Graphics.prototype = {
     zoom : function(delta){
         var oldfactor = this.factor;
         this.factor -= delta;
-        if(this.factor < 1) this.factor = 1;
-        if(this.factor > 12) this.factor = 12;
+        if(this.factor < this.config.interval.start) this.factor = this.config.interval.start;
+        if(this.factor > this.config.interval.end) this.factor = this.config.interval.end;
         var mouseoffset_old = {
             x : (this.mouse.position.x - this.offset.x) * oldfactor,
             y : (this.mouse.position.y - this.offset.y) * oldfactor
@@ -123,6 +128,7 @@ Graphics.prototype = {
         var self = this;
         window.requestAnimationFrame(function() {
             if(self.lastoffset === undefined || self.lastoffset.x != self.offset.x || self.lastoffset.y != self.offset.y) {
+                self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
                 self.drawMap();
                 self.redraw();
             }
