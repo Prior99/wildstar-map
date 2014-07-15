@@ -135,7 +135,7 @@ module.exports = function(grunt) {
 					console.log("Successfully connected to database!");
 					conn.query("CREATE TABLE categories ("+
 						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-						"name		  VARCHAR(128)," +
+						"name		  VARCHAR(128) NOT NULL," +
 						"description  TEXT," +
 						"icon		  VARCHAR(64)" +
 					")", function(err) {
@@ -145,21 +145,64 @@ module.exports = function(grunt) {
 						}
 						else console.log("Table \"categories\" successfully created!");
 					});
+					conn.query("CREATE TABLE ips("+
+						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+						"ip		  	  VARCHAR(42)" +
+					")", function(err) {
+						if(err) {
+							console.error(err);
+							grunt.fail.fatal("Unable to create table \"ips\"");
+						}
+						else console.log("Table \"ips\" successfully created!");
+					});
+					conn.query("CREATE TABLE cookies("+
+						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+						"cookie	  	  VARCHAR(42)" +
+					")", function(err) {
+						if(err) {
+							console.error(err);
+							grunt.fail.fatal("Unable to create table \"cookies\"");
+						}
+						else console.log("Table \"cookies\" successfully created!");
+					});
 					conn.query("CREATE TABLE places("+
 						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-						"name		  VARCHAR(128)," +
+						"name		  VARCHAR(128) NOT NULL," +
 						"description  TEXT," +
-						"category	  INT," +
-						"x			  FLOAT," +
-						"y			  FLOAT," +
+						"category	  INT NOT NULL," +
+						"x			  FLOAT NOT NULL," +
+						"y			  FLOAT NOT NULL," +
+						"parent		  INT," +
+						"ip			  INT NOT NULL," +
+						"cookie		  INT NOT NULL," +
 
-						"FOREIGN KEY(category) REFERENCES categories(id)" +
+						"FOREIGN KEY(category) REFERENCES categories(id)," +
+						"FOREüIGN KEY(ip) REFERENCES ips(id)," +
+						"FOREIGN KEY(cookie) REFERENCES cookies(id)," +
+						"FOREIGN KEY(parent) REFERENCES places(id)" +
 					")", function(err) {
 						if(err) {
 							console.error(err);
 							grunt.fail.fatal("Unable to create table \"places\"");
 						}
 						else console.log("Table \"places\" successfully created!");
+					});
+					conn.query("CREATE TABLE votes("+
+						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+						"value		  INT NOT NULL," +
+						"place		  INT NOT NULL," +
+						"ip			  INT NOT NULL," +
+						"cookie		  INT NOT NULL," +
+
+						"FOREIGN KEY(ip) REFERENCES ips(id)," +
+						"FOREIGN KEY(cookie) REFERENCES cookies(id)," +
+						"FOREIGN KEY(place) REFERENCES places(id)" +
+					")", function(err) {
+						if(err) {
+							console.error(err);
+							grunt.fail.fatal("Unable to create table \"votes\"");
+						}
+						else console.log("Table \"votes\" successfully created!");
 					});
 				}
 			});
