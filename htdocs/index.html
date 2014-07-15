@@ -5,22 +5,24 @@
         <script src="js/graphics.js"></script>
         <script src="js/mouse.js"></script>
         <script src="js/index.js"></script>
+        <script src="js/context.js"></script>
         <script src="js/drawables/cursor.js"></script>
         <script src="js/drawables/zoomometer.js"></script>
         <script src="js/drawables/fps.js"></script>
         <style>
             html, body {
-                padding : 0;
-                margin : 0;
-                width:100%;
-                height:100%;
+                font-family: "Verdana";
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
             }
             canvas {
                 position: absolute;
                 left: 0px;
                 top: 0px;
-                display:block;
-                cursor:none;
+                display: block;
+                cursor: none;
             }
             canvas#map {
                 background-color: #2f76bb;
@@ -31,7 +33,24 @@
             #wrapper {
                 padding: 30px;
             }
-
+            div.context {
+                width: 200px;
+                border: black;
+                background-color: white;
+                position: absolute;
+                min-height: 20px;
+                padding: 0;
+            }
+            div.context a {
+                width: 190px;
+                display: inline-block;
+                height: 20px;
+                background-color: white;
+                padding: 5px;
+            }
+            div.context a:hover {
+                background-color: lightblue;
+            }
         </style>
     </head>
     <body>
@@ -58,6 +77,13 @@
                             x : 30,
                             y : 30
                         }));
+                        var context = new Context(mouse);
+                        context.addEntry("Test", function() {
+                            alert("hi");
+                        });
+                        context.addEntry("Log", function() {
+                            console.log("hi");
+                        });
                     }
                 });
             }

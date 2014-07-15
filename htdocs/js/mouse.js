@@ -5,11 +5,17 @@ var Mouse = function(canvas) {
         y : 0
     };
     canvas.addEventListener("mouseup", function(e) {
+        if(e.button == 0)
         self.up(e);
     });
     canvas.addEventListener("mousedown", function(e) {
+        if(e.button == 0)
         self.down(e);
     });
+    canvas.addEventListener("contextmenu", function(e) {
+        e.preventDefault();
+        self.context(e);
+    }, false);
     canvas.addEventListener("mousemove", function(e) {
         self.move(e);
     });
@@ -23,6 +29,7 @@ var Mouse = function(canvas) {
     this.upEvents = [];
     this.downEvents = [];
     this.wheelEvents = [];
+    this.contextEvents = [];
     this.last = undefined;
 };
 
@@ -39,11 +46,19 @@ Mouse.prototype = {
     onWheel : function(f) {
         this.wheelEvents.push(f);
     },
+    onContext : function(f) {
+        this.contextEvents.push(f);
+    },
     up : function() {
         this.pressed = false;
         this.last = undefined;
         for(var i in this.upEvents) {
             this.upEvents[i]();
+        }
+    },
+    context : function(e) {
+        for(var i in this.contextEvents) {
+            this.contextEvents[i](e.clientX, e.clientY);
         }
     },
     down : function() {
