@@ -6,9 +6,12 @@
         <script src="js/mouse.js"></script>
         <script src="js/index.js"></script>
         <script src="js/context.js"></script>
+        <script src="js/websocket.js"></script>
+        <script src="js/connection.js"></script>
         <script src="js/drawables/cursor.js"></script>
         <script src="js/drawables/zoomometer.js"></script>
         <script src="js/drawables/fps.js"></script>
+        <script src="port.js"></script>
         <style>
             html, body {
                 font-family: "Verdana";
@@ -89,6 +92,8 @@
             }
 
             $(function() {
+                new Connection();
+                Websocket.init();
                 Index($("<ul></ul>").appendTo("#wrapper"));
             });
         </script>

@@ -116,7 +116,7 @@ module.exports = function(grunt) {
 					password : "",
 					database : "wildstar_map"
 				};
-				FS.writeFileSync("database_config.json", JSON.stringify(dbConf));
+				FS.writeFileSync("database_config.json", JSON.stringify(dbConf, null, 4));
 			}
 			else {
 				dbConf = JSON.parse(data);
@@ -133,79 +133,107 @@ module.exports = function(grunt) {
 				}
 				else {
 					console.log("Successfully connected to database!");
-					conn.query("CREATE TABLE categories ("+
-						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-						"name		  VARCHAR(128) NOT NULL," +
-						"description  TEXT," +
-						"icon		  VARCHAR(64)" +
-					")", function(err) {
-						if(err) {
-							console.error(err);
-							grunt.fail.fatal("Unable to create table \"categories\"");
-						}
-						else console.log("Table \"categories\" successfully created!");
-					});
-					conn.query("CREATE TABLE ips("+
-						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-						"ip		  	  VARCHAR(42)" +
-					")", function(err) {
-						if(err) {
-							console.error(err);
-							grunt.fail.fatal("Unable to create table \"ips\"");
-						}
-						else console.log("Table \"ips\" successfully created!");
-					});
-					conn.query("CREATE TABLE cookies("+
-						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-						"cookie	  	  VARCHAR(42)" +
-					")", function(err) {
-						if(err) {
-							console.error(err);
-							grunt.fail.fatal("Unable to create table \"cookies\"");
-						}
-						else console.log("Table \"cookies\" successfully created!");
-					});
-					conn.query("CREATE TABLE places("+
-						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-						"name		  VARCHAR(128) NOT NULL," +
-						"description  TEXT," +
-						"category	  INT NOT NULL," +
-						"x			  FLOAT NOT NULL," +
-						"y			  FLOAT NOT NULL," +
-						"parent		  INT," +
-						"ip			  INT NOT NULL," +
-						"cookie		  INT NOT NULL," +
+					function createCookies() {
+						conn.query("CREATE TABLE cookies("+
+							"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+							"cookie	  	  VARCHAR(42)" +
+						")", function(err) {
+							if(err) {
+								console.error(err);
+								grunt.fail.fatal("Unable to create table \"cookies\"");
+							}
+							else console.log("Table \"cookies\" successfully created!");
+							createCategories();
+						});
+					}
+					function createCategories() {
+						conn.query("CREATE TABLE categories ("+
+							"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+							"name		  VARCHAR(128) NOT NULL," +
+							"description  TEXT," +
+							"icon		  VARCHAR(64)" +
+						")", function(err) {
+							if(err) {
+								console.error(err);
+								grunt.fail.fatal("Unable to create table \"categories\"");
+							}
+							else {
+								console.log("Table \"categories\" successfully created!");
+								conn.query("INSERT INTO categories (name, description, icon) VALUES (?)", [
+									["Exile Questhub", "Place where many quests and usually vendors and transmats and all kinds of settler-improvements can be found.", "questhub_exile.png"]
+								], function(err, result) {
+									if(err) {
+										console.error(err);
+										grunt.fail.fatal("Unable to insert default categories.");
+									}
+									else console.log(result.affectedRows + " categories created.");
+								});
+							}
+							createPlaces();
+						});
 
-						"FOREIGN KEY(category) REFERENCES categories(id)," +
-						"FOREüIGN KEY(ip) REFERENCES ips(id)," +
-						"FOREIGN KEY(cookie) REFERENCES cookies(id)," +
-						"FOREIGN KEY(parent) REFERENCES places(id)" +
-					")", function(err) {
-						if(err) {
-							console.error(err);
-							grunt.fail.fatal("Unable to create table \"places\"");
-						}
-						else console.log("Table \"places\" successfully created!");
-					});
-					conn.query("CREATE TABLE votes("+
-						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-						"value		  INT NOT NULL," +
-						"place		  INT NOT NULL," +
-						"ip			  INT NOT NULL," +
-						"cookie		  INT NOT NULL," +
+					}
+					function createPlaces() {
+						conn.query("CREATE TABLE places("+
+							"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+							"name		  VARCHAR(128) NOT NULL," +
+							"description  TEXT," +
+							"category	  INT NOT NULL," +
+							"x			  FLOAT NOT NULL," +
+							"y			  FLOAT NOT NULL," +
+							"parent		  INT," +
+							"cookie		  INT NOT NULL," +
+							"map		  VARCHAR(64) NOT NULL," +
 
-						"FOREIGN KEY(ip) REFERENCES ips(id)," +
-						"FOREIGN KEY(cookie) REFERENCES cookies(id)," +
-						"FOREIGN KEY(place) REFERENCES places(id)" +
-					")", function(err) {
-						if(err) {
-							console.error(err);
-							grunt.fail.fatal("Unable to create table \"votes\"");
-						}
-						else console.log("Table \"votes\" successfully created!");
-					});
+							"FOREIGN KEY(category) REFERENCES categories(id)," +
+							"FOREIGN KEY(cookie) REFERENCES cookies(id)," +
+							"FOREIGN KEY(parent) REFERENCES places(id)" +
+						")", function(err) {
+							if(err) {
+								console.error(err);
+								grunt.fail.fatal("Unable to create table \"places\"");
+							}
+							else console.log("Table \"places\" successfully created!");
+								createVotes();
+						});
+					}
+					function createVotes() {
+						conn.query("CREATE TABLE votes("+
+							"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+							"value		  INT NOT NULL," +
+							"place		  INT NOT NULL," +
+							"cookie		  INT NOT NULL," +
+
+							"FOREIGN KEY(cookie) REFERENCES cookies(id)," +
+							"FOREIGN KEY(place) REFERENCES places(id)" +
+						")", function(err) {
+							if(err) {
+								console.error(err);
+								grunt.fail.fatal("Unable to create table \"votes\"");
+							}
+							else console.log("Table \"votes\" successfully created!");
+							conn.end();
+							done();
+						});
+					}
+					createCookies();
 				}
 			});
+		});
+	});
+	grunt.registerTask('serverconfig', function() {
+		var done = this.async();
+		var obj = {
+			port : 45673,
+			host : "0.0.0.0",
+			htdocsDirectory : "./htdocs/"
+		};
+		FS.writeFile("server_config.json", JSON.stringify(obj, null, 4), function(err) {
+			if(err) {
+				grunt.fail.fatal("Unable to write configfile \"server_config.json\".");
+			}
+			console.log("Example configfile \"server_config.json\" successfully created.");
+			done();
 		});
 	});
 	grunt.registerTask('west', ['assemble-west', 'disassemble-west']);
