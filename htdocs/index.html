@@ -58,7 +58,6 @@
     </head>
     <body>
         <div id="wrapper">
-            <h1>Maps - Index</h1>
         </div>
         </canvas>
         <script>
@@ -92,9 +91,17 @@
             }
 
             $(function() {
-                new Connection();
+                var wrapper = $("#wrapper");
+                wrapper.append("<h1>Loading...</h1>");
+                wrapper.append("<p>Waiting for connection to server...</p>");
+                Connection.addLoginDoneHandler(function() {
+                    console.log("Login done. Identity is " + Connection.identity);
+                    wrapper.html("");
+                    wrapper.append("<h1>Select Map</h1>");
+                    Index($("<ul></ul>").appendTo(wrapper));
+                });
+                Connection.init();
                 Websocket.init();
-                Index($("<ul></ul>").appendTo("#wrapper"));
             });
         </script>
     </body>

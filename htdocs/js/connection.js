@@ -1,17 +1,16 @@
-function Connection() {
-    var self = this;
-    Websocket.addOpenListener(function() {
-        if(localStorage.identity) {
-            self.checkCookie();
-        }
-        else {
-            self.acquireCookie();
-        }
-    });
-    this.loginHandlers = [];
-};
-
-Connection.prototype = {
+Connection = {
+    loginHandlers : [],
+    init : function() {
+        var self = this;
+        Websocket.addOpenListener(function() {
+            if(localStorage.identity) {
+                self.checkCookie();
+            }
+            else {
+                self.acquireCookie();
+            }
+        });
+    },
     addLoginDoneHandler : function(method) {
         this.loginHandlers.push(method);
     },
@@ -24,7 +23,7 @@ Connection.prototype = {
             if(answer.success) {
                 self.identity = answer.cookie;
                 localStorage.identity = answer.cookie;
-                for(var i in self.loginHandlers) self.loginhandlers[i]();
+                for(var i in self.loginHandlers) self.loginHandlers[i]();
             }
             else {
                 self.acquireCookie();
