@@ -17,6 +17,10 @@ Context.prototype = {
         });
     },
     show : function(x, y) {
+        this.position = {
+            x: x,
+            y: y
+        };
         var self = this;
         this.hide();
         this.div = $("<div class='context'>").appendTo("body").css({
@@ -33,6 +37,7 @@ Context.prototype = {
         }
     },
     hide : function() {
+        this.position = undefined;
         if(this.div !== undefined) this.div.remove();
             this.div = undefined;
     }
