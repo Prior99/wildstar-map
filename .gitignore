@@ -3,3 +3,4 @@ map_west/
 node_modules/
 big/
 htdocs/index.json
+database_config.json
