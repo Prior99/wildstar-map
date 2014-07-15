@@ -4,13 +4,14 @@ var Connection = function(socket){
 	this.closeListeners = [];
 	this.responses = {};
 	this.id = 0;
-
+	this.dead = false;
 	this.socket = socket;
 	var self = this;
 	this.socket.on("message", function(message){
 		self.receive(message);
 	});
 	this.socket.on("close", function(){
+		this.dead = true;
 		for(var i in self.closeListeners) {
 			self.closeListeners[i]();
 		}
@@ -37,6 +38,7 @@ Connection.prototype = {
 		};
 		this.responses[this.id] = handler;
 		//console.log("send: " + JSON.stringify(meta));
+		if(!self.dead)
 		this.socket.send(JSON.stringify(meta));
 		this.id++;
 	},
@@ -60,6 +62,7 @@ Connection.prototype = {
 							type: "res",
 							param: ans
 						};
+						if(!self.dead)
 						self.socket.send(JSON.stringify(answer));
 					});
 				}
@@ -70,6 +73,7 @@ Connection.prototype = {
 						type: "res",
 						param: ans
 					};
+					if(!self.dead)
 					this.socket.send(JSON.stringify(answer));
 				}
 			}

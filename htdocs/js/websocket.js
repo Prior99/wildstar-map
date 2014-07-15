@@ -5,6 +5,7 @@
  * of the websocket-protocol.
  *
  * Distributed 2014 by Soana (Andra Ruebsteck) under the terms of GPL.
+ * Based upon an original idea by Prior (Frederick Gnodtke).
  */
 var Websocket = {
 	openListener: [],
