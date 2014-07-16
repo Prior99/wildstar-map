@@ -38,7 +38,7 @@ Connection.prototype = {
 		};
 		this.responses[this.id] = handler;
 		//console.log("send: " + JSON.stringify(meta));
-		if(!self.dead)
+		if(!this.dead)
 		this.socket.send(JSON.stringify(meta));
 		this.id++;
 	},

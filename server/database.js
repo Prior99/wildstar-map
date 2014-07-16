@@ -26,21 +26,20 @@ Database.prototype = {
 			}
 		);
 	},
-	isCategoryValid : function(id, callback) {
-		this.pool.query("SELECT id FROM categories WHERE id = ?", [id], function(err, result) {
+	getCategory : function(id, callback) {
+		this.pool.query("SELECT name, icon FROM categories WHERE id = ?", [id], function(err, rows) {
 			if(err) {
 				console.log(err);
-				callback(err, false);
+				callback(err, undefined);
 			}
 			else {
-				if(result.affectedRows == 0) callback(undefined, false);
-				else callback(undefined, true);
+				callback(undefined, rows[0]);
 			}
 		});
 	},
 	addPlace : function(x, y, name, description, category, cookie, map, callback) {
 		var self = this;
-		this.isCategoryValid(category, function(err, catOK) {
+		this.getCategory(category, function(err, catOK) {
 			if(catOK) {
 				self.pool.query("INSERT INTO places(map, name, description, x, y, category, cookie) VALUES (?, ?, ?, ?, ?, ?, ?)",
 					[map, name, description, x, y, category, cookie],

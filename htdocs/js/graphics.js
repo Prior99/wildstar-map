@@ -71,7 +71,7 @@ Graphics.prototype = {
     },
     forceRedraw : function() {
         this.lastoffset = undefined;
-        this.redraw();
+        //this.redraw();
     },
     drawMap : function() {
         var self = this;
@@ -168,14 +168,17 @@ Graphics.prototype = {
                     place.y/self.factor - self.iconsize/2 + self.offset.y < self.canvas.width &&
                     place.y/self.factor + self.iconsize/2 + self.offset.y > 0)if(true) {
                     var icon;
-                    if(icon = self.icons[place.icon]) {
-                        var drawx = place.x/self.factor + self.offset.x;
-                        var drawy = place.y/self.factor + self.offset.y;
-                        self.ctx.drawImage(icon,
+                    function draw(img) {
+                        self.ctx.drawImage(img,
                             drawx - self.iconsize/2,
                             drawy - self.iconsize/2,
                             self.iconsize, self.iconsize
                         );
+                    }
+                    if(icon = self.icons[place.icon]) {
+                        var drawx = place.x/self.factor + self.offset.x;
+                        var drawy = place.y/self.factor + self.offset.y;
+                        draw(icon);
                         self.ctx.textAlign = "center";
                         self.ctx.font = "15px Verdana";
                         self.ctx.strokeStyle = "black;"
@@ -188,9 +191,9 @@ Graphics.prototype = {
                     }
                     else {
                         var img = new Image();
-                        /*img.onload = function() {
-                            self.ctx.drawImage(icon, place.x - self.offset.x - 16, place.y - self.offset.y - 16, 32, 32);
-                        };*/
+                        img.onload = function() {
+                            draw(this);
+                        };
                         img.src = "icons/" + place.icon;
                         self.icons[place.icon] = img;
                     }

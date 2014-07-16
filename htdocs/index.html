@@ -143,6 +143,12 @@
 							for(var i in places){
 								graphics.addPlace(places[i]);
 							}
+							graphics.forceRedraw();
+						});
+						Websocket.addMessageListener("addPlace", function(place) {
+							graphics.addPlace(place);
+							console.log(place);
+							graphics.forceRedraw();
 						});
 					}
 				});

@@ -1,7 +1,8 @@
 var WebSocket = require("./websocket_server.js");
 
-function Client(ws, databasePool) {
+function Client(ws, databasePool, clients) {
 	var self = this;
+	this.clients = clients;
 	this.ws = ws;
 	this.socket = new WebSocket(ws);
 	this.addAcquireCookieListener();
@@ -29,6 +30,21 @@ Client.prototype = {
 			self.db.addPlace(obj.x, obj.y, obj.name, obj.description, obj.category, self.identity.id, obj.map, function(err) {
 				answer({
 					success : !err
+				});
+				self.db.getCategory(obj.category, function(err, cat) {
+					for(var i in self.clients) {
+						(function(client) {
+							console.log("Broadcasting place...");
+							client.socket.send("addPlace", {
+								category : cat.name,
+								description : obj.description,
+								icon : cat.icon,
+								name : obj.name,
+								x : obj.x,
+								y : obj.y
+							});
+						})(self.clients[i]);
+					}
 				});
 			});
 		}, true);

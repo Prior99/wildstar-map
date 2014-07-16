@@ -68,7 +68,7 @@ function startWebsocketServer() {
                     host : config.host,
                     port : config.port
                 }).on("connection", function(ws) {
-                    var client = new Client(ws, db);
+                    var client = new Client(ws, db, clients);
                     clients.push(client);
                     ws.on("close", function() {
                         clients.splice(clients.indexOf(client), 1);
