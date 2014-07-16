@@ -5,7 +5,9 @@ var Graphics = function(canvas, overlay, config, mouse, folder) {
         self.resize();
     }, false);
     this.drawables = [];
+    this.places = [];
     this.loading = 0;
+    this.iconsize = 24;
     this.max_images_cached = 100;
     this.FPS = 60; //Fixing the framerate to a framerate different from 60 does not work
     this.canvas = canvas;
@@ -13,6 +15,7 @@ var Graphics = function(canvas, overlay, config, mouse, folder) {
     this.ctx = this.canvas.getContext("2d");
     this.octx = this.overlay.getContext("2d");
     this.images = {};
+    this.icons = {};
     this.drawstep = 0;
     this.folder = folder;
     this.factor = config.interval.end;
@@ -107,6 +110,10 @@ Graphics.prototype = {
                                     //console.log(images);
                                     if(self.drawstep == mystep) draw(img, x, y);
                                     self.loading --;
+                                    console.log("Loading Images: " + self.loading);
+                                    if(self.loading == 0) {
+                                        self.completedLoading();
+                                    }
                                 };
                                 self.images[filename] = img;
                                 img.src = filename;
@@ -117,6 +124,10 @@ Graphics.prototype = {
                                 self.images[filename].onload = function() {
                                     if(self.drawstep == mystep) draw(self.images[filename], x, y);
                                     self.loading --;
+                                    console.log("Loading Images: " + self.loading);
+                                    if(self.loading == 0) {
+                                        self.completedLoading();
+                                    }
                                 };
                             })(x, y, self.drawstep, filename);
                         }
@@ -144,6 +155,54 @@ Graphics.prototype = {
         this.drawables.push(drawable);
     },
 
+    addPlace : function(place) {
+        this.places.push(place);
+    },
+
+    drawPlaces : function() {
+        var self = this;
+        for(var i in this.places) {
+            (function(place) {
+                if(place.x/self.factor - self.iconsize/2 + self.offset.x < self.canvas.width &&
+                    place.x/self.factor + self.iconsize/2 + self.offset.x > 0 &&
+                    place.y/self.factor - self.iconsize/2 + self.offset.y < self.canvas.width &&
+                    place.y/self.factor + self.iconsize/2 + self.offset.y > 0)if(true) {
+                    var icon;
+                    if(icon = self.icons[place.icon]) {
+                        var drawx = place.x/self.factor + self.offset.x;
+                        var drawy = place.y/self.factor + self.offset.y;
+                        self.ctx.drawImage(icon,
+                            drawx - self.iconsize/2,
+                            drawy - self.iconsize/2,
+                            self.iconsize, self.iconsize
+                        );
+                        self.ctx.textAlign = "center";
+                        self.ctx.font = "15px Verdana";
+                        self.ctx.strokeStyle = "black;"
+                        self.ctx.fillStyle = "white";
+                        self.ctx.strokeText(place.name, drawx, drawy - self.iconsize/2 - 5 - 14);
+                        self.ctx.fillText(place.name, drawx, drawy - self.iconsize/2 - 5 - 14);
+                        self.ctx.font = "11px Verdana";
+                        self.ctx.strokeText("(" + place.category + ")", drawx, drawy - self.iconsize/2 - 5);
+                        self.ctx.fillText("(" + place.category + ")", drawx, drawy - self.iconsize/2 - 5);
+                    }
+                    else {
+                        var img = new Image();
+                        /*img.onload = function() {
+                            self.ctx.drawImage(icon, place.x - self.offset.x - 16, place.y - self.offset.y - 16, 32, 32);
+                        };*/
+                        img.src = "icons/" + place.icon;
+                        self.icons[place.icon] = img;
+                    }
+                }
+            })(this.places[i]);
+        }
+    },
+
+    completedLoading : function() {
+        this.drawPlaces();
+    },
+
     redraw : function() {
         var self = this;
         window.requestAnimationFrame(function() {
@@ -157,6 +216,7 @@ Graphics.prototype = {
                     //self.ctx.fillRect(0, 0, self.canvas.width, self.canvas.height);
                     self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
                     self.drawMap();
+                    self.drawPlaces();
                 }
                 self.drawDrawables();
                 self.lastoffset = {

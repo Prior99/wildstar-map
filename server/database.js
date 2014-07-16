@@ -7,19 +7,22 @@ function Database(pool) {
 Database.prototype = {
 	getPlaces : function(map, callback) {
 		this.pool.query(
-			"SELECT" +
+			"SELECT " +
 				"p.x AS x," +
 				"p.y AS y," +
 				"p.name AS name," +
 				"p.description AS description," +
 				"c.name AS category," +
-				"c.icon AS icon" +
-			"FROM places p" +
-			"LEFT JOIN categories c ON p.category = c.id" +
+				"c.icon AS icon " +
+			"FROM places p " +
+			"LEFT JOIN categories c ON p.category = c.id " +
 			"WHERE map = ?",
 			[map],
 			function(err, rows) {
-				callback(rows);
+				if(err) {
+					console.error(err);
+				}
+				callback(err, rows);
 			}
 		);
 	},

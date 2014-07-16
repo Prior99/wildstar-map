@@ -8,11 +8,21 @@ function Client(ws, databasePool) {
 	this.addCheckCookieListener();
 	this.addGetCategoriesListener();
 	this.addAddPlaceListener();
+	this.addGetPlacesListener();
 	this.db = databasePool;
 	this.identity = undefined;
 };
 
 Client.prototype = {
+	addGetPlacesListener : function() {
+		var self = this;
+		this.socket.addListener('getPlaces', function(obj, answer) {
+			self.db.getPlaces(obj.map, function(err, places) {
+				console.log(places);
+				answer(places);
+			})
+		}, true);
+	},
 	addAddPlaceListener : function() {
 		var self = this;
 		this.socket.addListener('addPlace', function(obj, answer) {

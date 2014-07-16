@@ -21,6 +21,14 @@ Connection = {
 		});
 	},
 
+	getPlaces : function(map, callback) {
+		Websocket.send("getPlaces", {
+			map :map
+		}, function(places) {
+			callback(places);
+		});
+	},
+
 	submitPlace : function(x, y, id, name, description, map, callback) {
 		var self = this;
 		Websocket.send("addPlace", {

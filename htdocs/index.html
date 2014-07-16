@@ -129,10 +129,20 @@
 						}));
 						var context = new Context(mouse);
 						context.addEntry("Add Place", function() {
-							createPlace(context.position.x, context.position.y, map);
+							createPlace(
+								context.position.x*graphics.factor - graphics.offset.x*graphics.factor,
+								context.position.y*graphics.factor - graphics.offset.y*graphics.factor,
+								map
+							);
 						});
 						context.addEntry("Log", function() {
 							console.log("hi");
+						});
+						Connection.getPlaces(map, function(places) {
+							console.log(places);
+							for(var i in places){
+								graphics.addPlace(places[i]);
+							}
 						});
 					}
 				});
