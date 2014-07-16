@@ -159,9 +159,12 @@ module.exports = function(grunt) {
 							}
 							else {
 								console.log("Table \"categories\" successfully created!");
-								conn.query("INSERT INTO categories (name, description, icon) VALUES (?)", [
-									["Exile Questhub", "Place where many quests and usually vendors and transmats and all kinds of settler-improvements can be found.", "questhub_exile.png"]
-								], function(err, result) {
+								conn.query("INSERT INTO categories (name, description, icon) VALUES ?", [[
+									["Exile Questhub", "Place where many quests and usually vendors and transmats and all kinds of settler-improvements can be found.", "questhub_exile.png"],
+									["Quest", "NPCs that give you quests or tasks.", "quest.png"],
+									["Taxi", "Fast-travel everywhere using taxis.", "taxi.png"],
+									["Vendor", "All kinds of vendors that buy and sell stuff.", "vendor.png"]
+								]], function(err, result) {
 									if(err) {
 										console.error(err);
 										grunt.fail.fatal("Unable to insert default categories.");
