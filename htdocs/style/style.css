@@ -1,0 +1,154 @@
+/*
+ * General style
+ */
+
+* {
+    font-family: "Verdana";
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#wrapper {
+    padding: 30px;
+}
+
+/*
+ * Canvas
+ */
+
+canvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    display: block;
+    cursor: none;
+}
+
+canvas#map {
+    background-color: #2f76bb;
+    z-index: 10;
+}
+
+canvas#overlay {
+    background-color: transparent;
+    z-index: 20;
+}
+
+/*
+ * Contextmenu
+ */
+
+div.context {
+    width: 200px;
+    border: black;
+    background-color: white;
+    position: absolute;
+    min-height: 20px;
+    padding: 0;
+    z-index: 90;
+}
+div.context a {
+    width: 190px;
+    display: inline-block;
+    height: 20px;
+    background-color: white;
+    padding: 5px;
+}
+div.context a:hover {
+    background-color: lightblue;
+}
+
+/*
+ * Create-place-dialog window
+ */
+
+div.dialog {
+    width: 600px;
+    min-height: 100px;
+    margin: auto;
+    background-color: white;
+    border: 1px solid black;
+    z-index: 100;
+    padding: 10px;
+}
+div.dialogwrapper {
+    z-index: 99;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    margin-top: 100px;
+    position: absolute;
+}
+
+/*
+ * Selectboxes in create-place-dialog
+ */
+
+div.select {
+    display: inline-block;
+    padding: 5px;
+    border: 1px solid lightgrey;
+    height: 24px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    width: 150px;
+    background-color: white;
+}
+div.select img {
+    display: inline;
+    -webkit-transform: translate(0, 5px);
+    -moz-transform: translate(0, 5px);
+    -opera-transform: translate(0, 5px);
+    transform: translate(0, 6px);
+    margin-top: -6px;
+    margin-right: 5px;
+}
+div.select:hover {
+    background-color: #aaa;
+}
+div.selected {
+    background-color: lightblue;
+}
+
+/*
+ * Info for places
+ */
+
+div.placeinfo {
+    width: 200px;
+    border: black;
+    background-color: white;
+    position: absolute;
+    min-height: 20px;
+    padding: 5px;
+    z-index: 90;
+}
+
+div.placeinfo h1 {
+    margin-top: -28px;
+    margin-bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+}
+
+div.placeinfo h2 {
+    font-size: 18px;
+    margin-top: 0px;
+    width: 100%;
+    text-align: center;
+}
+
+div.placeinfo img {
+    -webkit-transform: translate(-18px, -18px);
+    -moz-transform: translate(-18px, -18px);
+    -opera-transform: translate(-18px, -18px);
+    transform: translate(-18px, -18px);
+    width: 30px;
+    height: 30px;
+}

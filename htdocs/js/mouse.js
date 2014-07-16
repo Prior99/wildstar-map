@@ -61,11 +61,14 @@ Mouse.prototype = {
             this.contextEvents[i](e.clientX, e.clientY);
         }
     },
-    down : function() {
-        this.pressed = true;
-        this.last = undefined;
+    down : function(e) {
+        var ok = true
         for(var i in this.downEvents) {
-            this.downEvents[i]();
+            ok &= !this.downEvents[i](e.clientX, e.clientY);
+        }
+        if(ok) {
+            this.pressed = true;
+            this.last = undefined;
         }
     },
     move : function(e) {
@@ -80,7 +83,7 @@ Mouse.prototype = {
                 var offset = {
                     x : e.clientX - this.last.x,
                     y : e.clientY - this.last.y
-                }
+                };
                 for(var i in this.dragEvents) {
                     this.dragEvents[i](offset);
                 }

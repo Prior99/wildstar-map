@@ -5,6 +5,7 @@ function Cursor(mouse, conf) {
         x : mouse.position.x,
         y : mouse.position.y
     };
+    this.radius = 10;
 };
 
 Cursor.prototype = {
@@ -16,7 +17,7 @@ Cursor.prototype = {
 		g.octx.lineWidth = 2;
 		for(var i = -1; i <= 7; i+=2) {
 			g.octx.beginPath();
-			g.octx.arc(this.position.x, this.position.y, 10, i*Math.PI/4 + gap/2 + this.phi, (i+2)*Math.PI/4 - gap/2 + this.phi);
+			g.octx.arc(this.position.x, this.position.y, this.radius, i*Math.PI/4 + gap/2 + this.phi, (i+2)*Math.PI/4 - gap/2 + this.phi);
 			g.octx.stroke();
 		}
 		this.phi += degToRad(2);

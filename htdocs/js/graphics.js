@@ -71,7 +71,7 @@ Graphics.prototype = {
     },
     forceRedraw : function() {
         this.lastoffset = undefined;
-        //this.redraw();
+        this.redraw();
     },
     drawMap : function() {
         var self = this;
@@ -159,6 +159,20 @@ Graphics.prototype = {
         this.places.push(place);
     },
 
+    transformRealToRenderCoordinates : function(x, y) {
+        return {
+            x : x/this.factor + this.offset.x,
+            y : y/this.factor + this.offset.y
+        };
+    },
+
+    transformRenderToRealCoordinates : function(x, y) {
+        return {
+            x : x*this.factor - this.offset.x*this.factor,
+            y : y*this.factor - this.offset.y*this.factor
+        };
+    },
+
     drawPlaces : function() {
         var self = this;
         for(var i in this.places) {
@@ -176,6 +190,7 @@ Graphics.prototype = {
                         );
                     }
                     if(icon = self.icons[place.icon]) {
+                        var coord = self.transformRealToRenderCoordinates(place.x, place.y);
                         var drawx = place.x/self.factor + self.offset.x;
                         var drawy = place.y/self.factor + self.offset.y;
                         draw(icon);
@@ -183,11 +198,11 @@ Graphics.prototype = {
                         self.ctx.font = "15px Verdana";
                         self.ctx.strokeStyle = "black;"
                         self.ctx.fillStyle = "white";
-                        self.ctx.strokeText(place.name, drawx, drawy - self.iconsize/2 - 5 - 14);
-                        self.ctx.fillText(place.name, drawx, drawy - self.iconsize/2 - 5 - 14);
+                        self.ctx.strokeText(place.name, coord.x, coord.y - self.iconsize/2 - 5 - 14);
+                        self.ctx.fillText(place.name, coord.x, coord.y - self.iconsize/2 - 5 - 14);
                         self.ctx.font = "11px Verdana";
-                        self.ctx.strokeText("(" + place.category + ")", drawx, drawy - self.iconsize/2 - 5);
-                        self.ctx.fillText("(" + place.category + ")", drawx, drawy - self.iconsize/2 - 5);
+                        self.ctx.strokeText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5);
+                        self.ctx.fillText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5);
                     }
                     else {
                         var img = new Image();
@@ -225,7 +240,7 @@ Graphics.prototype = {
                 self.lastoffset = {
                     x : self.offset.x,
                     y : self.offset.y
-                }
+                };
             }
             self.redraw();
         });
