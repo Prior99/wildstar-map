@@ -234,6 +234,7 @@ Graphics.prototype = {
                      * Will draw the place with its icon and text
                      */
                     function draw(img, coord) {
+                        if(place.score < 0) self.ctx.globalAlpha = 0.5;
                         self.ctx.drawImage(img, //First, draw the icon
                             coord.x - self.iconsize/2,
                             coord.y - self.iconsize/2,
@@ -248,6 +249,7 @@ Graphics.prototype = {
                         self.ctx.font = "11px Verdana"; //Smaller font
                         self.ctx.strokeText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5); //Draw the category
                         self.ctx.fillText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5);
+                        if(place.score < 0) self.ctx.globalAlpha = 1;
                     }
                     var coord = self.transformRealToRenderCoordinates(place.x, place.y); //Get rendercoordinates
                     if(icon = self.icons[place.icon]) { //If icon already cached, nothing to be done, just draw the damn thing

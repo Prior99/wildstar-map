@@ -14,10 +14,13 @@ Database.prototype = {
 				"p.description AS description," +
 				"c.name AS category," +
 				"c.icon AS icon, " +
-				"p.id as id " +
+				"p.id as id, " +
+				"SUM(v.value) AS score " +
 			"FROM places p " +
 			"LEFT JOIN categories c ON p.category = c.id " +
-			"WHERE map = ?",
+			"LEFT JOIN votes v ON p.id = v.place " +
+			"WHERE map = ? " +
+			"GROUP BY p.id",
 			[map],
 			function(err, rows) {
 				if(err) {

@@ -8,7 +8,7 @@
 
 var _placeinfo;
 
-function placeInfo(place, x, y) {
+function placeInfo(place, x, y, graphics) {
 	var div = $("<div class='placeinfo'></div>")
 		.css({
 			"left" : (x-2) + "px",
@@ -30,6 +30,8 @@ function placeInfo(place, x, y) {
 				if(s == undefined) s = 0;
 				score = s;
 				scorediv.html(score);
+				place.score = score;
+				graphics.forceRedraw();
 			}
 			function vote(diff) {
 				Websocket.send("vote", {
