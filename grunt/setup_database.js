@@ -35,7 +35,7 @@ module.exports = function(done) {
 			else {
 				console.log("Successfully connected to database!");
 				function createCookies() {
-					conn.query("CREATE TABLE cookies("+
+					conn.query("CREATE TABLE IF NOT EXISTS cookies("+
 						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
 						"cookie	  	  VARCHAR(42)" +
 					")", function(err) {
@@ -48,7 +48,7 @@ module.exports = function(done) {
 					});
 				}
 				function createCategories() {
-					conn.query("CREATE TABLE categories ("+
+					conn.query("CREATE TABLE IF NOT EXISTS categories ("+
 						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
 						"name		  VARCHAR(128) NOT NULL," +
 						"description  TEXT," +
@@ -60,7 +60,7 @@ module.exports = function(done) {
 						}
 						else {
 							console.log("Table \"categories\" successfully created!");
-							conn.query("INSERT INTO categories (name, description, icon) VALUES ?", [[
+							var categories = [
 								["Exile Questhub", "Place where many quests and usually vendors and transmats and all kinds of settler-improvements can be found.", "questhub_exile.png"],
 								["Quest", "NPCs that give you quests or tasks.", "quest.png"],
 								["Taxi", "Fast-travel everywhere using taxis.", "taxi.png"],
@@ -86,20 +86,24 @@ module.exports = function(done) {
 								["Path: Explorer", "A mission belonging to the path of the explorer.", "mission_explorer.png"],
 								["Commodities", "A commodities broker.", "commodities.png"],
 								["Directions", "City directions advising NPCs.", "city_directions.png"]
-							]], function(err, result) {
-								if(err) {
-									console.error(err);
-									grunt.fail.fatal("Unable to insert default categories.");
-								}
-								else console.log(result.affectedRows + " categories created.");
-							});
+							];
+							var ok = 0;
+							for(var i in categories) {
+								(function(cat) {
+									conn.query("SELECT id FROM categories WHERE name = ?", [cat[0]], function(err, rows) {
+										if(rows.length == 0) {
+											conn.query("INSERT INTO categories(name, description, icon) VALUES(?, ?, ?)", cat);
+										}
+									});
+								})(categories[i]);
+							}
 						}
 						createPlaces();
 					});
 
 				}
 				function createPlaces() {
-					conn.query("CREATE TABLE places("+
+					conn.query("CREATE TABLE IF NOT EXISTS places("+
 						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
 						"name		  VARCHAR(128) NOT NULL," +
 						"description  TEXT," +
@@ -123,7 +127,7 @@ module.exports = function(done) {
 					});
 				}
 				function createVotes() {
-					conn.query("CREATE TABLE votes("+
+					conn.query("CREATE TABLE IF NOT EXISTS votes("+
 						"id			  INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
 						"value		  INT NOT NULL," +
 						"place		  INT NOT NULL," +
