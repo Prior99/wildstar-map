@@ -12,6 +12,7 @@ function Client(ws, databasePool, clients) {
 	this.addGetPlacesListener();
 	this.addVoteListener();
 	this.addGetVoteScoreListener();
+	this.addGetVoteListener();
 	this.db = databasePool;
 	this.identity = undefined;
 };
@@ -27,24 +28,38 @@ Client.prototype = {
 			});
 		}, true);
 	},
+	addGetVoteListener : function() {
+		var self = this;
+		this.socket.addListener('getVote', function(obj, answer){
+			self.db.getVote(obj.placeid, self.identity.id, function(err, result) {
+				answer({
+					score : result
+				});
+			});
+		}, true);
+	},
 	addVoteListener : function() {
 		var self = this;
 		this.socket.addListener('vote', function(obj, answer) {
-			self.db.hasVoted(obj.placeid, self.identity.id, function(err, result) {
+			self.db.getVote(obj.placeid, self.identity.id, function(err, result) {
+				function _answer() {
+					self.db.getVoteScore(obj.placeid, function(err, score) {
+						answer({
+							success: true,
+							score : score
+						});
+					});
+				}
 				function performVote() {
 					if(obj.value < 0) obj.value = -1;
 					if(obj.value > 0) obj.value = 1;
 					if(obj.value != 0) {
 						self.db.vote(obj.value, obj.placeid, self.identity.id, function(err) {
-							answer({
-								success: true
-							});
+							_answer();
 						});
 					}
 					else {
-						answer({
-							success: true
-						});
+						_answer();
 					}
 				}
 				if(result) {
@@ -70,7 +85,7 @@ Client.prototype = {
 	addAddPlaceListener : function() {
 		var self = this;
 		this.socket.addListener('addPlace', function(obj, answer) {
-			self.db.addPlace(obj.x, obj.y, obj.name, obj.description, obj.category, self.identity.id, obj.map, function(err) {
+			self.db.addPlace(obj.x, obj.y, obj.name, obj.description, obj.category, self.identity.id, obj.map, function(err, id) {
 				answer({
 					success : !err
 				});
@@ -84,7 +99,9 @@ Client.prototype = {
 								icon : cat.icon,
 								name : obj.name,
 								x : obj.x,
-								y : obj.y
+								y : obj.y,
+								id : id
+
 							});
 						})(self.clients[i]);
 					}

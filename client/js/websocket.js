@@ -123,7 +123,7 @@ var Websocket = {
 			id: this.id
 		};
 		this.responses[this.id] = handler;
-		//console.log("send: " + JSON.stringify(meta));
+		console.log("send: " + JSON.stringify(meta));
 		this.socket.send(JSON.stringify(meta));
 		this.id++;
 	}

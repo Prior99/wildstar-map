@@ -40,8 +40,8 @@ Database.prototype = {
 		});
 
 	},
-	hasVoted : function(place, uid, callback) {
-		this.pool.query("SELECT id FROM votes WHERE cookie = ? AND place = ?",
+	getVote : function(place, uid, callback) {
+		this.pool.query("SELECT value FROM votes WHERE cookie = ? AND place = ?",
 			[uid, place], function(err, rows) {
 			if(err) {
 				console.error(err);
@@ -49,10 +49,10 @@ Database.prototype = {
 			}
 			else {
 				if(rows.length == 0) {
-					callback(undefined, false);
+					callback(undefined, undefined);
 				}
 				else {
-					callback(undefined, true);
+					callback(undefined, rows[0].value);
 				}
 			}
 		});

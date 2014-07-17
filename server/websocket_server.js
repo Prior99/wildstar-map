@@ -37,7 +37,7 @@ Connection.prototype = {
 			id: this.id
 		};
 		this.responses[this.id] = handler;
-		//console.log("send: " + JSON.stringify(meta));
+		console.log("send: " + JSON.stringify(meta));
 		if(!this.dead)
 		this.socket.send(JSON.stringify(meta));
 		this.id++;
@@ -46,7 +46,7 @@ Connection.prototype = {
 	receive: function(message){
 		var self = this;
 		var obj = JSON.parse(message);
-		//console.log("received: " + message);
+		console.log("received: " + message);
 		if(obj.type === undefined || obj.id === undefined){
 			console.error("received broken packet: " + message + " - Required field missing");
 			return;
