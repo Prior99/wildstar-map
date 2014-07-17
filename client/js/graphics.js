@@ -247,8 +247,8 @@ Graphics.prototype = {
                         self.ctx.strokeText(place.name, coord.x, coord.y - self.iconsize/2 - 5 - 14); //Draw the name
                         self.ctx.fillText(place.name, coord.x, coord.y - self.iconsize/2 - 5 - 14);
                         self.ctx.font = "11px Verdana"; //Smaller font
-                        self.ctx.strokeText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5); //Draw the category
-                        self.ctx.fillText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5);
+                        self.ctx.strokeText(place.category, coord.x, coord.y - self.iconsize/2 - 5); //Draw the category
+                        self.ctx.fillText(place.category, coord.x, coord.y - self.iconsize/2 - 5);
                         if(place.score < 0) self.ctx.globalAlpha = 1;
                     }
                     var coord = self.transformRealToRenderCoordinates(place.x, place.y); //Get rendercoordinates
