@@ -1,3 +1,12 @@
+/*
+ * context.js
+ *
+ * This file contains methods to create, setup and display a simple
+ * contextmenu.
+ *
+ * 2014 by Prior(Frederick Gnodtke) under the terms of GNU GPL
+ */
+
 function Context(mouse) {
 	var self = this;
 	mouse.onContext(function(x, y) {

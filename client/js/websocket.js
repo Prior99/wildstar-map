@@ -1,5 +1,5 @@
 /**
- * connection.js
+ * websocket.js
  *
  * Handles the connection between the browser and the server on top
  * of the websocket-protocol.

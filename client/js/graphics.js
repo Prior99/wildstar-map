@@ -1,3 +1,14 @@
+/*
+ * graphics.js
+ *
+ * The most significant sourcefile in this project. It does all the fancy
+ * drawing visual stuff and also handles the transformation of render to
+ * real map coordinates.
+ *
+ * 2014 by Prior(Frederick Gnodtke) under the terms of GNU GPL
+ */
+
+
 var Graphics = function(canvas, overlay, config, mouse, folder) {
     var self = this;
     this.config = config;

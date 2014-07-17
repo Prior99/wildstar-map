@@ -1,19 +1,28 @@
+/*
+ * drawables/cursor.js
+ *
+ * Draws a beautiful rotating cursor on the overlaycanvas.
+ *
+ * 2014 by Prior(Frederick Gnodtke) under the terms of GNU GPL
+ */
+
+
 function Cursor(mouse, conf) {
-    this.mouse = mouse;
-    this.phi = 0;
-    this.position = {
-        x : mouse.position.x,
-        y : mouse.position.y
-    };
-    this.radius = 10;
+	this.mouse = mouse;
+	this.phi = 0;
+	this.position = {
+		x : mouse.position.x,
+		y : mouse.position.y
+	};
+	this.radius = 10;
 };
 
 Cursor.prototype = {
-    draw : function(g) {
-        this.position.x = this.mouse.position.x;
-        this.position.y = this.mouse.position.y;
-        var gap = degToRad(40);
-        g.octx.strokeStyle = "white";
+	draw : function(g) {
+		this.position.x = this.mouse.position.x;
+		this.position.y = this.mouse.position.y;
+		var gap = degToRad(40);
+		g.octx.strokeStyle = "white";
 		g.octx.lineWidth = 2;
 		for(var i = -1; i <= 7; i+=2) {
 			g.octx.beginPath();
@@ -21,13 +30,13 @@ Cursor.prototype = {
 			g.octx.stroke();
 		}
 		this.phi += degToRad(2);
-    },
-    getRect : function() {
-        return {
-            x : this.position.x - 12,
-            y : this.position.y - 12,
-            width : 24,
-            height : 24
-        };
-    }
+	},
+	getRect : function() {
+		return {
+			x : this.position.x - 12,
+			y : this.position.y - 12,
+			width : 24,
+			height : 24
+		};
+	}
 };

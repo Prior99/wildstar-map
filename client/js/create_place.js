@@ -1,3 +1,11 @@
+/*
+ * create_place.js
+ *
+ * Supplies the code to create a dialog to create new places.
+ *
+ * 2014 by Prior(Frederick Gnodtke) under the terms of GNU GPL
+ */
+
 function createPlace(x, y, map) {
 	var div = $("<div class='dialog'></div>")
 		.appendTo($("<div class='dialogwrapper'></div>").appendTo("body"));

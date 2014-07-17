@@ -1,3 +1,13 @@
+/*
+ * connection.js
+ *
+ * This is the toplevel end of the websocektconnection.
+ * It supplies a collection of methods that can be used to easily communicate
+ * with the server without having to touch the underlying websocket.
+ *
+ * 2014 by Prior(Frederick Gnodtke) under the terms of GNU GPL
+ */
+
 Connection = {
 	loginHandlers : [],
 	init : function() {
