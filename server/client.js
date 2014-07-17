@@ -10,11 +10,54 @@ function Client(ws, databasePool, clients) {
 	this.addGetCategoriesListener();
 	this.addAddPlaceListener();
 	this.addGetPlacesListener();
+	this.addVoteListener();
+	this.addGetVoteScoreListener();
 	this.db = databasePool;
 	this.identity = undefined;
 };
 
 Client.prototype = {
+	addGetVoteScoreListener : function() {
+		var self = this;
+		this.socket.addListener('getVoteScore', function(obj, answer) {
+			self.db.getVoteScore(obj.placeid, function(err, score) {
+				answer({
+					score : score
+				});
+			});
+		}, true);
+	},
+	addVoteListener : function() {
+		var self = this;
+		this.socket.addListener('vote', function(obj, answer) {
+			self.db.hasVoted(obj.placeid, self.identity.id, function(err, result) {
+				function performVote() {
+					if(obj.value < 0) obj.value = -1;
+					if(obj.value > 0) obj.value = 1;
+					if(obj.value != 0) {
+						self.db.vote(obj.value, obj.placeid, self.identity.id, function(err) {
+							answer({
+								success: true
+							});
+						});
+					}
+					else {
+						answer({
+							success: true
+						});
+					}
+				}
+				if(result) {
+					self.db.unvote(obj.placeid, self.identity.id, function(err) {
+						performVote();
+					});
+				}
+				else {
+					performVote();
+				}
+			})
+		}, true);
+	},
 	addGetPlacesListener : function() {
 		var self = this;
 		this.socket.addListener('getPlaces', function(obj, answer) {

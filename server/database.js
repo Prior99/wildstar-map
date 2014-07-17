@@ -13,7 +13,8 @@ Database.prototype = {
 				"p.name AS name," +
 				"p.description AS description," +
 				"c.name AS category," +
-				"c.icon AS icon " +
+				"c.icon AS icon, " +
+				"p.id as id " +
 			"FROM places p " +
 			"LEFT JOIN categories c ON p.category = c.id " +
 			"WHERE map = ?",
@@ -25,6 +26,65 @@ Database.prototype = {
 				callback(err, rows);
 			}
 		);
+	},
+	vote : function(value, place, uid, callback) {
+		this.pool.query("INSERT INTO votes (value, place, cookie) VALUES(?, ?, ?)",
+			[value, place, uid], function(err, result) {
+			if(err) {
+				console.error(err);
+				callback(err);
+			}
+			else {
+				callback(undefined);
+			}
+		});
+
+	},
+	hasVoted : function(place, uid, callback) {
+		this.pool.query("SELECT id FROM votes WHERE cookie = ? AND place = ?",
+			[uid, place], function(err, rows) {
+			if(err) {
+				console.error(err);
+				callback(err);
+			}
+			else {
+				if(rows.length == 0) {
+					callback(undefined, false);
+				}
+				else {
+					callback(undefined, true);
+				}
+			}
+		});
+	},
+	unvote : function(place, uid, callback) {
+		this.pool.query("DELETE FROM votes WHERE cookie = ? AND place = ?",
+		[uid, place], function(err, result) {
+			if(err) {
+				console.error(err);
+				callback(err);
+			}
+			else {
+				callback(undefined);
+			}
+		});
+	},
+	getVoteScore : function(place, callback) {
+		this.pool.query("SELECT SUM(value) AS score FROM votes WHERE place = ?",
+		[place], function(err, rows) {
+			if(err) {
+				console.error(err);
+				callback(err);
+			}
+			else {
+				if(rows.length != 1) {
+					callback("getVoteScore() selected more or less than one row.");
+				}
+				else {
+					callback(undefined, rows[0].score);
+				}
+			}
+		});
 	},
 	getCategory : function(id, callback) {
 		this.pool.query("SELECT name, icon FROM categories WHERE id = ?", [id], function(err, rows) {
