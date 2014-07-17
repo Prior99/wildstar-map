@@ -1,8 +1,5 @@
-map_east/
-map_west/
 node_modules/
 big/
-htdocs/index.json
+htdocs/
 database_config.json
-htdocs/port.js
 server_config.json

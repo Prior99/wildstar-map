@@ -103,4 +103,62 @@ module.exports = function(grunt) {
 	grunt.registerTask('west', ['assemble-west', 'disassemble-west']);
 	grunt.registerTask('east', ['assemble-east', 'disassemble-east']);
 	grunt.registerTask('maps', ['west', 'east']);
+
+	grunt.initConfig({
+		copy: {
+			build: {
+				cwd: 'client',
+				src: ['**', '!js/**', '!style/**'],
+				dest: 'htdocs',
+				expand: true
+			},
+		},
+		clean: {
+			build: {
+				src: ['htdocs/icons', 'htdocs/lib', 'htdocs/index.html', 'htdocs/site.js', 'htdocs/style.css']
+			},
+		},
+		autoprefixer: {
+			build: {
+				expand: true,
+				cwd: 'htdocs',
+				src: ['**/*.css'],
+				dest: 'htdocs'
+			}
+		},
+		uglify: {
+			build: {
+				options: {
+					sourceMap : true,
+					sourceMapIncludeSources : true,
+					mangle: false
+				},
+				files: {
+					'htdocs/site.js': [ 'client/**/*.js' ]
+				}
+			}
+		},
+		less: {
+			development: {
+				options: {
+					compress: true,
+					yuicompress: true,
+					optimization: 2
+				},
+				files: {
+					"htdocs/style.css": "client/style/**.less"
+				}
+			}
+		}
+	});
+
+	grunt.loadNpmTasks("grunt-contrib-clean");
+	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadNpmTasks('grunt-autoprefixer');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-less');
+
+	grunt.registerTask('style', ['less', 'autoprefixer']);
+	grunt.registerTask('javascript', ['uglify']);
+	grunt.registerTask('client', ['clean', 'copy', 'style', 'javascript']);
 };
