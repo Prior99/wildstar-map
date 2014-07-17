@@ -42,7 +42,7 @@ function createPlace(x, y, map) {
 				});
 			}).attr("disabled", "disabled");
 		function checkOkay() {
-			if(selectedID && name.val().length > 2) {
+		if(selectedID /*&& name.val().length > 2*/) {
 				button.removeAttr("disabled");
 			}
 			else {
