@@ -65,4 +65,5 @@ function createPlace(x, y, map) {
 			})(d, cat.id);
 		}
 	});
+	return div;
 }

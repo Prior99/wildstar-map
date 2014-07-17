@@ -21,8 +21,10 @@
 						var mouse = new Mouse(overlaycanvas);
 						var graphics = new Graphics(canvas, overlaycanvas, obj, mouse, map);
 						var cursor = new Cursor(mouse);
+						var placeCreate;
 						graphics.addDrawable(cursor);
 						mouse.onDown(function(x, y) {
+							if(placeCreate) placeCreate.remove();
 							var ret = false;
 							removePlaceInfo();
 							var coords = graphics.transformRenderToRealCoordinates(x, y);
@@ -52,7 +54,7 @@
 						}));
 						var context = new Context(mouse);
 						context.addEntry("Add Place", function() {
-							createPlace(
+							placeCreate = createPlace(
 								context.position.x*graphics.factor - graphics.offset.x*graphics.factor,
 								context.position.y*graphics.factor - graphics.offset.y*graphics.factor,
 								map
