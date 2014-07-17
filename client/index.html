@@ -27,15 +27,15 @@
 							if(placeCreate) placeCreate.remove();
 							var ret = false;
 							removePlaceInfo();
-							var coords = graphics.transformRenderToRealCoordinates(x, y);
 							for(var i in graphics.places) {
 								var place = graphics.places[i];
+								var coords = graphics.transformRealToRenderCoordinates(place.x, place.y);
 								var sub = {
-									x : place.x - coords.x,
-									y : place.y - coords.y
+									x : x - coords.x,
+									y : y - coords.y
 								}
 								var len = Math.sqrt(sub.x*sub.x + sub.y*sub.y);
-								if(len < graphics.iconsize/2 + cursor.radius) {
+								if(len - cursor.radius < graphics.iconsize/2) {
 									var pcoord = graphics.transformRealToRenderCoordinates(place.x, place.y);
 									placeInfo(place, pcoord.x, pcoord.y, graphics);
 									ret = true;
