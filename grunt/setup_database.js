@@ -64,7 +64,28 @@ module.exports = function(done) {
 								["Exile Questhub", "Place where many quests and usually vendors and transmats and all kinds of settler-improvements can be found.", "questhub_exile.png"],
 								["Quest", "NPCs that give you quests or tasks.", "quest.png"],
 								["Taxi", "Fast-travel everywhere using taxis.", "taxi.png"],
-								["Vendor", "All kinds of vendors that buy and sell stuff.", "vendor.png"]
+								["Vendor", "All kinds of vendors that buy and sell stuff.", "vendor.png"],
+								["Auction House", "An auction house.", "auction_house.png"],
+								["Bank", "A bank.", "bank.png"],
+								["Dye", "A dye vendor.", "dye.png"],
+								["General POI", "A general point of interest.", "poi.png"],
+								["Housing", "A transit to the next housing-teleporter.", "house.png"],
+								["Mailbox", "A mailbox.", "mailbox.png"],
+								["Node: Fishing", "A node for the tradeskill fishing.", "node_fishing.png"],
+								["Node: Mining", "A node for the tradeskill miner.", "node_mining.png"],
+								["Node: Farming", "A node for the tradeskill farmer.", "node_farming.png"],
+								["Node: Relic", "A node for the tradeskill relic hunter.", "node_relic.png"],
+								["Node: Tree", "A node for the tradeskill survivor.", "node_tree.png"],
+								["Trainer", "Some craftingtrainer.", "trainer.png"],
+								["Crafting", "A craftingtable.", "tradeskill.png"],
+								["Dungeon", "Entry to a dungeon.", "dungeon.png"],
+								["Eldan Stone", "An eldan stone can be found here.", "eldan_stone.png"],
+								["Path: Scientist", "A mission belonging to the path of the scientist.", "mission_scientist.png"],
+								["Path: Settler", "A mission belonging to the path of the settler.", "mission_settler.png"],
+								["Path: Soldier", "A mission belonging to the path of the soldier.", "mission_soldier.png"],
+								["Path: Explorer", "A mission belonging to the path of the explorer.", "mission_explorer.png"],
+								["Commodities", "A commodities broker.", "commodities.png"],
+								["Directions", "City directions advising NPCs.", "city_directions.png"]
 							]], function(err, result) {
 								if(err) {
 									console.error(err);
