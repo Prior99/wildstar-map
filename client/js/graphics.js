@@ -19,7 +19,7 @@ var Graphics = function(canvas, overlay, config, mouse, folder) {
     this.places = [];
     this.loading = 0;
     this.iconsize = 24;
-    this.max_images_cached = 100;
+    this.max_images_cached = 3000;
     this.FPS = 60; //Fixing the framerate to a framerate different from 60 does not work
     this.canvas = canvas;
     this.overlay = overlay;
@@ -193,18 +193,12 @@ Graphics.prototype = {
                     place.y/self.factor - self.iconsize/2 + self.offset.y < self.canvas.width &&
                     place.y/self.factor + self.iconsize/2 + self.offset.y > 0)if(true) {
                     var icon;
-                    function draw(img) {
+                    function draw(img, coord) {
                         self.ctx.drawImage(img,
-                            drawx - self.iconsize/2,
-                            drawy - self.iconsize/2,
+                            coord.x - self.iconsize/2,
+                            coord.y - self.iconsize/2,
                             self.iconsize, self.iconsize
                         );
-                    }
-                    if(icon = self.icons[place.icon]) {
-                        var coord = self.transformRealToRenderCoordinates(place.x, place.y);
-                        var drawx = place.x/self.factor + self.offset.x;
-                        var drawy = place.y/self.factor + self.offset.y;
-                        draw(icon);
                         self.ctx.textAlign = "center";
                         self.ctx.font = "15px Verdana";
                         self.ctx.strokeStyle = "black;"
@@ -215,10 +209,14 @@ Graphics.prototype = {
                         self.ctx.strokeText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5);
                         self.ctx.fillText("(" + place.category + ")", coord.x, coord.y - self.iconsize/2 - 5);
                     }
+                    var coord = self.transformRealToRenderCoordinates(place.x, place.y);
+                    if(icon = self.icons[place.icon]) {
+                        draw(icon, coord);
+                    }
                     else {
                         var img = new Image();
                         img.onload = function() {
-                            draw(this);
+                            draw(this, coord);
                         };
                         img.src = "icons/" + place.icon;
                         self.icons[place.icon] = img;
