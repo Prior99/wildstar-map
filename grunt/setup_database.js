@@ -85,7 +85,8 @@ module.exports = function(done) {
 								["Path: Soldier", "A mission belonging to the path of the soldier.", "mission_soldier.png"],
 								["Path: Explorer", "A mission belonging to the path of the explorer.", "mission_explorer.png"],
 								["Commodities", "A commodities broker.", "commodities.png"],
-								["Directions", "City directions advising NPCs.", "city_directions.png"]
+								["Directions", "City directions advising NPCs.", "city_directions.png"],
+								["Dominion Questhub", "Place where many quests and usually vendors and transmats and all kinds of settler-improvements can be found.", "questhub_dominion.png"]
 							];
 							var ok = 0;
 							for(var i in categories) {
