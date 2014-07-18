@@ -69,7 +69,7 @@ function placeInfo(place, x, y, graphics) {
 		});
 	});
 	var description = place.description.length == 0 ? "No description given." : place.description;
-	div.append("<img src='icons/" + place.icon + "'/>")
+	div.append("<img src='img/" + place.icon + "'/>")
 	div.append("<h1>" + place.name + "</h1>")
 	div.append("<h2>" + place.category + "</h2>");
 	div.append($("<div class='description'>" + description + "</div>"));

@@ -263,7 +263,7 @@ Graphics.prototype = {
                         img.onload = function() { //If done loading, draw me :)
                             draw(this, coord);
                         };
-                        img.src = "icons/" + place.icon; //Kickoff loading
+                        img.src = "img/" + place.icon; //Kickoff loading
                         self.icons[place.icon] = img; //save pointer to image
                     }
                 }
