@@ -21,7 +21,7 @@ function placeInfo(place, x, y, graphics) {
 	_placeinfo = div;
 	Websocket.send("getVote", {
 		placeid : place.id
-	},function(obj) {
+	},function(obj2) {
 		Websocket.send("getVoteScore", {
 			placeid : place.id
 		}, function(obj) {
@@ -57,11 +57,11 @@ function placeInfo(place, x, y, graphics) {
 				}
 				else vote(-1);
 			});
-			if(obj.score) {
-				if(obj.score == -1) {
+			if(obj2.score) {
+				if(obj2.score == -1) {
 					votedown.addClass("selected");
 				}
-				if(obj.score == 1) {
+				if(obj2.score == 1) {
 					voteup.addClass("selected");
 				}
 			}
