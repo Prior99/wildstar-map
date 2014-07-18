@@ -50,7 +50,6 @@ Client.prototype = {
 						});
 						for(var i in self.clients) {
 							(function(client) {
-								console.log("Broadcasting place...");
 								client.socket.send("voted", {
 									score : score,
 									id : obj.placeid
@@ -86,7 +85,6 @@ Client.prototype = {
 		var self = this;
 		this.socket.addListener('getPlaces', function(obj, answer) {
 			self.db.getPlaces(obj.map, function(err, places) {
-				console.log(places);
 				answer(places);
 			})
 		}, true);
@@ -101,7 +99,6 @@ Client.prototype = {
 				self.db.getCategory(obj.category, function(err, cat) {
 					for(var i in self.clients) {
 						(function(client) {
-							console.log("Broadcasting place...");
 							client.socket.send("addPlace", {
 								category : cat.name,
 								description : obj.description,
