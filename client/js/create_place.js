@@ -53,7 +53,7 @@ function createPlace(x, y, map) {
 			var cat = categories[i];
 			console.log(cat);
 			var d = $("<div class='select'>" + cat.name + "</div>").appendTo(select);
-			d.prepend("<img width='24' height='24' src='icons/" + cat.icon + "' />");
+			d.prepend("<img width='24' height='24' src='img/" + cat.icon + "' />");
 			(function(d, id) {
 				d.click(function(){
 					if(selected) selected.removeClass("selected");
