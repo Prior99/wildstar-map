@@ -76,6 +76,16 @@
 							console.log(place);
 							graphics.forceRedraw();
 						});
+						Websocket.addMessageListener("voted", function(obj) {
+							for(var i in graphics.places) {
+								var p = graphics.places[i];
+								if(p.id == obj.id) {
+									p.score = obj.score;
+									break;
+								}
+							}
+							graphics.forceRedraw();
+						});
 					}
 				});
 			}

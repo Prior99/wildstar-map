@@ -48,6 +48,15 @@ Client.prototype = {
 							success: true,
 							score : score
 						});
+						for(var i in self.clients) {
+							(function(client) {
+								console.log("Broadcasting place...");
+								client.socket.send("voted", {
+									score : score,
+									id : obj.placeid
+								});
+							})(self.clients[i]);
+						}
 					});
 				}
 				function performVote() {
@@ -100,8 +109,8 @@ Client.prototype = {
 								name : obj.name,
 								x : obj.x,
 								y : obj.y,
-								id : id
-
+								id : id,
+								score : 0
 							});
 						})(self.clients[i]);
 					}
