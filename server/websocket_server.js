@@ -38,8 +38,14 @@ Connection.prototype = {
 		};
 		this.responses[this.id] = handler;
 		//console.log("send: " + JSON.stringify(meta));
-		if(!this.dead)
-		this.socket.send(JSON.stringify(meta));
+		if(!this.dead) {
+			try {
+				this.socket.send(JSON.stringify(meta));
+			}
+			catch(err) {
+				this.dead = true;
+			}
+		}
 		this.id++;
 	},
 
@@ -62,8 +68,14 @@ Connection.prototype = {
 							type: "res",
 							param: ans
 						};
-						if(!self.dead)
-						self.socket.send(JSON.stringify(answer));
+						if(!self.dead) {
+							try {
+								self.socket.send(JSON.stringify(answer));
+							}
+							catch(err) {
+								self.dead = true;
+							}
+						}
 					});
 				}
 				else{
@@ -73,8 +85,14 @@ Connection.prototype = {
 						type: "res",
 						param: ans
 					};
-					if(!self.dead)
-					this.socket.send(JSON.stringify(answer));
+					if(!self.dead) {
+						try {
+							this.socket.send(JSON.stringify(answer));
+						}
+						catch(err) {
+							self.dead = true;
+						}
+					}
 				}
 			}
 		}
