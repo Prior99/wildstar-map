@@ -37,7 +37,7 @@ just the way it was extracted from the game but converted from *.tex* to *.png*.
 In order to use the map on the web it will have to be assembled and then
 disassembled into several levels of zoom (default: 8).
 
-This step will take it's time, so type
+This step will take its time, so type
 ```sh
 $ grunt maps
 ```
